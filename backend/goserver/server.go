@@ -12,7 +12,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
     fmt.Fprintf(w, "KRITA REQUEST ")
     fmt.Printf("REQUEST")
     bodyBuffer, _ := ioutil.ReadAll(r.Body)  
-    data = data+ string(bodyBuffer)
+    data = data+ "\n" + string(bodyBuffer)
     fmt.Printf(string(bodyBuffer))
 }
 
@@ -24,5 +24,5 @@ func main() {
     http.HandleFunc("/receiver/submit/org.krita.krita", handler)
     http.HandleFunc("/", viewHandler)
 
-    http.ListenAndServe(":8080", nil)
+    http.ListenAndServe(":80", nil)
 }
