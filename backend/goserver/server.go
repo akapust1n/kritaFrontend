@@ -46,11 +46,12 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+        fmt.Printf("hello")
 	http.HandleFunc("/receiver/submit/org.krita.krita", handler)
 	http.HandleFunc("/", viewHandler)
 	//var pro Request
 	// s := `{"qtVersion":{ "value": "5.2.0"}}`
 	// parse([]byte(s), &pro)
 
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":80", nil)
 }
