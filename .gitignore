@@ -17,3 +17,15 @@ nohup*
 
 # Project-local glide cache, RE: https://github.com/Masterminds/glide/issues/736
 .glide/
+node_modules/
+public/api
+*.idea/*
+*.log
+.travis.yml
+*.bak
+.tern-project
+public/build
+*.tmpl.js
+public/coverage
+*.swp
+frontend/public/assets/*
