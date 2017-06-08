@@ -7,12 +7,28 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
+
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 
 	_ "github.com/lib/pq"
 )
 
 var data string
 var db *sql.DB
+var (
+	googleOauthConfig = &oauth2.Config{
+		RedirectURL:  "http://localhost:8080/GoogleCallback",
+		ClientID:     os.Getenv("googlekey"),
+		ClientSecret: os.Getenv("googlesecret"),
+		Scopes: []string{"https://www.googleapis.com/auth/userinfo.profile",
+			"https://www.googleapis.com/auth/userinfo.email"},
+		Endpoint: google.Endpoint,
+	}
+	// Some random string, random for each request
+	oauthStateString = "random"
+)
 
 //Request from krita
 type Request struct {
@@ -65,20 +81,6 @@ func insertToDb(req Request) {
 	} else {
 		fmt.Println("insert ended!")
 	}
-	// 	usedID             varchar(80),
-	// appVersion varchar(40),
-	// compilerVersion real,
-	// typeCompiler varchar(10),
-	// language varchar(20),
-	// glslVersion  real,
-	// renderer varchar(50),
-	// vendor varchar(30),
-	// os    varchar(10),
-	// version varchar(15),
-	// qtVersion real,
-	// screenDpi int,
-	// screenHeight int,
-	// screenWidth int
 
 }
 
@@ -97,7 +99,33 @@ func handler(w http.ResponseWriter, r *http.Request) {
 func viewHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "<h1>Last requests</h1><div>%s</div>", data)
 }
+func handleGoogleLogin(w http.ResponseWriter, r *http.Request) {
+	url := googleOauthConfig.AuthCodeURL(oauthStateString)
+	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
+}
 
+func handleGoogleCallback(w http.ResponseWriter, r *http.Request) {
+	state := r.FormValue("state")
+	if state != oauthStateString {
+		fmt.Printf("invalid oauth state, expected '%s', got '%s'\n", oauthStateString, state)
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		return
+	}
+
+	code := r.FormValue("code")
+	token, err := googleOauthConfig.Exchange(oauth2.NoContext, code)
+	if err != nil {
+		fmt.Println("Code exchange failed with '%s'\n", err)
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		return
+	}
+
+	response, err := http.Get("https://www.googleapis.com/oauth2/v2/userinfo?access_token=" + token.AccessToken)
+
+	defer response.Body.Close()
+	contents, err := ioutil.ReadAll(response.Body)
+	fmt.Fprintf(w, "Content: %s\n", contents)
+}
 func main() {
 	fmt.Printf("hello")
 	//	connectionString :=
@@ -115,6 +143,8 @@ func main() {
 	defer db.Close()
 
 	http.HandleFunc("/receiver/submit/org.krita.krita", handler)
+	http.HandleFunc("/GoogleLogin", handleGoogleLogin)
+	http.HandleFunc("/GoogleCallback", handleGoogleCallback)
 	http.HandleFunc("/", viewHandler)
 
 	http.ListenAndServe(":8080", nil)
