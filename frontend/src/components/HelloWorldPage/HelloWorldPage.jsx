@@ -1,6 +1,7 @@
 import React, { PropTypes, Component } from 'react';
+import { OAuthButton, SignOutButton } from 'components/AuthButtons';
 
-import './App.css';
+import './HelloWorldPage.css';
 
 const propTypes = {
   initialName: PropTypes.string
@@ -10,7 +11,7 @@ const defaultProps = {
   initialName: 'Аноним'
 };
 
-class App extends Component {
+class HelloWorldPage extends Component {
   constructor(props) {
     super(props);
 
@@ -58,12 +59,15 @@ class App extends Component {
           <div><input onChange={this.handleNameChange} /></div>
           {this.renderGreetingWidget()}
         </div>
+        <h2>Авторизация</h2>
+        <OAuthButton provider='github' />
+        <SignOutButton />
       </div>
     );
   }
 }
 
-App.propTypes = propTypes;
-App.defaultProps = defaultProps;
+HelloWorldPage.propTypes = propTypes;
+HelloWorldPage.defaultProps = defaultProps;
 
-export default App;
+export default HelloWorldPage;
