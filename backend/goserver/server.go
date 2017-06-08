@@ -147,5 +147,5 @@ func main() {
 	http.HandleFunc("/GoogleCallback", handleGoogleCallback)
 	http.HandleFunc("/", viewHandler)
 
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":80", nil)
 }
