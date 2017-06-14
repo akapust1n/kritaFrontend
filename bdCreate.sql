@@ -7,5 +7,5 @@ CREATE TABLE generalInfo(
 CREATE TABLE agregatedInfo(
     sampleKey bigserial primary key,
     data jsonb,
-    cameToServer timestamp default current_timestamp    
+    generatedTime timestamp default current_timestamp    
 );

@@ -44,7 +44,7 @@ func main() {
 	http.HandleFunc("/", viewHandler)
 
 	//ticker := time.NewTicker(time.Minute * 2)
-	ticker := time.NewTicker(time.Second * 30)
+	ticker := time.NewTicker(time.Minute * 10)
 
 	go func() {
 		for t := range ticker.C {

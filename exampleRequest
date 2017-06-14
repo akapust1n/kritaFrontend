@@ -1,0 +1,36 @@
+{
+    "compiler": {
+        "type": "GCC",
+        "version": "5.4"
+    },
+    "cpu": {
+        "architecture": "x86_64",
+        "count": 4
+    },
+    "locale": {
+        "language": "English",
+        "region": "UnitedStates"
+    },
+    "opengl": {
+        "glslVersion": "1.30",
+        "renderer": "Mesa DRI Intel(R) Haswell Mobile ",
+        "type": "GL",
+        "vendor": "Intel Open Source Technology Center",
+        "vendorVersion": "Mesa 12.0.6",
+        "version": "3.0"
+    },
+    "platform": {
+        "os": "linux",
+        "version": "ubuntu-16.04"
+    },
+    "qtVersion": {
+        "value": "5.9.0"
+    },
+    "screens": [
+        {
+            "dpi": 101,
+            "height": 768,
+            "width": 1366
+        }
+    ]
+}

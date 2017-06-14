@@ -3,22 +3,23 @@ package server
 import (
 	"fmt"
 	"net/http"
-	"time"
 )
 
 func AgregatedDataHandler(w http.ResponseWriter, r *http.Request) {
-	const selectQuery = "SELECT cameToServer,data from generalinfo order by cameToServer desc limit 1"
+	const selectQuery = "SELECT data from agregatedinfo order by generatedTime desc limit 1"
 	rows, err := Db.Query(selectQuery)
 	checkErr(err)
+	var data []byte
+
 	for rows.Next() {
-		var data []byte
-		var cameToServer time.Time
-		err := rows.Scan(&cameToServer, &data)
+		err := rows.Scan(&data)
 		checkErr(err)
-		fmt.Printf("Data from db")
+		fmt.Printf("frontend request from db")
 		fmt.Printf(string(data))
 		// fmt.Printf(string(cameToServer))
 
 	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(data)
 
 }
