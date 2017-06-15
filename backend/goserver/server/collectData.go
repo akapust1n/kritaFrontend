@@ -74,11 +74,13 @@ func countOther(query string, queryNotEql string, args ...string) float64 {
 
 func CollectData() {
 	var result md.CollectedData
+
 	const osQuery = "select count( data -> 'platform'->>'os') as os  from generalInfo where  data -> 'platform'->>'os' = $1"
 	result.Platform.Os.Linux = count(osQuery, "linux")
 	fmt.Println(result.Platform.Os.Linux)
 	result.Platform.Os.Windows = count(osQuery, "windows")
 	result.Platform.Os.Mac = count(osQuery, "mac")
+
 	const osOtherQuery = "select count( data -> 'platform'->>'os') as os  from generalInfo WHERE "
 	const osOtherNotEql = "data -> 'platform'->>'os' !="
 	result.Platform.Os.Other = countOther(osOtherQuery, osOtherNotEql, "linux", "windows", "mac")
@@ -89,9 +91,28 @@ func CollectData() {
 	const archCPUQuery = "select count( data -> 'cpu'->>'architecture')   from generalInfo where data -> 'cpu'->>'architecture' = $1"
 	result.CPU.Architecture.X86_64 = count(archCPUQuery, "x86_64")
 	result.CPU.Architecture.X86 = count(archCPUQuery, "i386") // может быть что-то другое нужно
-	const archCPUOtherQuery = "select count( data -> 'cpu'->>'architecture')   from generalInfo where "
+	const archCPUOtherQuery = "select count( data -> 'cpu'->>'architecture')   from generalInfo where  "
 	const archCPUOtherNotEql = "data -> 'cpu'->>'architecture' !="
 	result.CPU.Architecture.Other = countOther(archCPUOtherQuery, archCPUOtherNotEql, "x86_64", "i386")
+
+	const coreCountQuery = "select data -> 'cpu'->>'count'   from generalInfo  where data -> 'cpu'->>'count' = $1"
+	result.CPU.Cores.One = count(coreCountQuery, "1")
+	result.CPU.Cores.Two = count(coreCountQuery, "2")
+	result.CPU.Cores.Three = count(coreCountQuery, "3")
+	result.CPU.Cores.Four = count(coreCountQuery, "4")
+	result.CPU.Cores.Six = count(coreCountQuery, "6")
+	result.CPU.Cores.Eight = count(coreCountQuery, "8")
+
+	const coreCountOtherQuery = "select count( data -> 'cpu'->>'count')   from generalInfo where "
+	const coreCountOtherNotEql = "data -> 'cpu'->>'count' !="
+	result.CPU.Cores.Other = countOther(coreCountOtherQuery, coreCountOtherNotEql, "1", "2", "3", "4", "6", "8")
+
+	const compilerTypeQuery = "select count(data->'compiler'->>'type') from generalInfo where data->'compiler'->>'type' = $1"
+	result.Compiler.Type.GCC = count(compilerTypeQuery, "GCC")
+
+	const compilerTypeOtherQuery = "select count(data->'compiler'->>'type') from generalInfo where "
+	const compilerTypeOtherNotEql = "data->'compiler'->>'type' !="
+	result.Compiler.Type.Other = countOther(compilerTypeOtherQuery, compilerTypeOtherNotEql, "GCC")
 
 	fmt.Println("BEFORE JSON")
 
