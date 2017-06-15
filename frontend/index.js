@@ -1,8 +1,8 @@
 const express = require('express');
 const hostname = 'localhost';
-const port = 80;
+const port = 8092;
 const app = express();
-const request=require('request');
+const request = require('request');
 var router = express.Router();
 app.set('view engine', 'ejs');
 
@@ -10,21 +10,36 @@ app.use(express.static(__dirname));
 
 let http = require('http');
 
+function jsonToMap(jsonStr) {
+    return new Map(JSON.parse(jsonStr));
+}
 
 
 var temp = "there will be text"
 router.get('/', (req, res) => {
+    var temp
+    request('http://localhost:8080/agregatedData', function (error, response, body) {
+        temp = body;
+        console.log(temp)
+        //console.log('body:', body); // Print the HTML for the Google homepage. 
+        //console.log(jsonToMap(body))
+        console.log(temp)
+        var decodeHtmlEntity = function (x) {
+            return x.replace(/&#(\d+);/g, function (match, dec) {
+                return String.fromCharCode(dec);
+            });
+        };
+        temp = decodeHtmlEntity(temp)
+        res.render('./index.ejs', {
+            num: temp
+        });
+    });
 
-// request('http://37.139.19.10/text', function (error, response, body) {
-// temp = body;  
-// //console.log('body:', body); // Print the HTML for the Google homepage. 
-// });
-    res.render('./index.ejs', {num: 1});
     // res.render('./index.ejs', {});
     //res.render('./views/index.ejs', {});
 
 
-    
+
 });
 
 app.use(router);
