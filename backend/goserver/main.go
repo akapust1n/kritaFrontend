@@ -22,6 +22,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	bodyBuffer, _ := ioutil.ReadAll(r.Body)
 
 	fmt.Printf("after parse")
+	fmt.Println(string(bodyBuffer))
 	sw.InsertGeneralInfo(bodyBuffer)
 }
 
@@ -44,7 +45,7 @@ func main() {
 	http.HandleFunc("/", viewHandler)
 
 	//ticker := time.NewTicker(time.Minute * 2)
-	ticker := time.NewTicker(time.Minute * 2)
+	ticker := time.NewTicker(time.Minute * 10)
 
 	go func() {
 		for t := range ticker.C {

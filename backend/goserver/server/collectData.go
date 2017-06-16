@@ -85,6 +85,37 @@ func CollectData() {
 	const osOtherNotEql = "data -> 'platform'->>'os' !="
 	result.Platform.Os.Other = countOther(osOtherQuery, osOtherNotEql, "linux", "windows", "mac")
 
+	const osWindowsVersionQuery = "select count( data -> 'platform'->>'version') from generalInfo WHERE data -> 'platform'->>'os' ='windows' and data -> 'platform'->>'version'=$1"
+	result.Platform.Version.Windows.V7 = count(osWindowsVersionQuery, "7")
+	result.Platform.Version.Windows.V8 = count(osWindowsVersionQuery, "8")
+	result.Platform.Version.Windows.V81 = count(osWindowsVersionQuery, "8.1")
+	result.Platform.Version.Windows.V10 = count(osWindowsVersionQuery, "10")
+
+	const osWindowsVersionOtherQuery = "select count( data -> 'platform'->>'version') from generalInfo WHERE data -> 'platform'->>'os' ='windows' "
+	const osWindowsVersionOtherNotEql = " data -> 'platform'->>'version' != "
+	result.Platform.Version.Windows.Other = countOther(osWindowsVersionOtherQuery, osWindowsVersionOtherNotEql, "7", "8", "8.1", "10")
+
+	//не уверен, что именно так пишется нужные версии linux
+	const osLinuxVersionQuery = "select count( data -> 'platform'->>'version') from generalInfo WHERE data -> 'platform'->>'os' ='linux' and data -> 'platform'->>'version'=$1"
+	result.Platform.Version.Linux.Ubuntu1404 = count(osLinuxVersionQuery, "ubuntu-14.04")
+	result.Platform.Version.Linux.Ubuntu1410 = count(osLinuxVersionQuery, "ubuntu-14.10")
+	result.Platform.Version.Linux.Ubuntu1504 = count(osLinuxVersionQuery, "ubuntu-15.04")
+	result.Platform.Version.Linux.Ubuntu1510 = count(osLinuxVersionQuery, "ubuntu-15.10")
+	result.Platform.Version.Linux.Ubuntu1604 = count(osLinuxVersionQuery, "ubuntu-16.04")
+	result.Platform.Version.Linux.Ubuntu1610 = count(osLinuxVersionQuery, "ubuntu-16.10")
+	result.Platform.Version.Linux.Ubuntu1704 = count(osLinuxVersionQuery, "ubuntu-17.04")
+
+	const osLinuxVersionOtherQuery = "select count( data -> 'platform'->>'version') from generalInfo WHERE data -> 'platform'->>'os' ='linux' "
+	const osLinuxVersionOtherNotEql = " data -> 'platform'->>'version' != "
+	result.Platform.Version.Linux.Other = countOther(osLinuxVersionOtherQuery, osLinuxVersionOtherNotEql, "ubuntu-14.04", "ubuntu-14.10", "ubuntu-15.04", "ubuntu-15.10", "ubuntu-16.04", "ubuntu-16.10", "ubuntu-17.04")
+
+	const osMacVersionQuery = "select count( data -> 'platform'->>'version') from generalInfo WHERE data -> 'platform'->>'os' ='mac' and data -> 'platform'->>'version'=$1"
+	result.Platform.Version.Mac.V1012 = count(osMacVersionQuery, "10.12")
+
+	const osMacVersionOtherQuery = "select count( data -> 'platform'->>'version') from generalInfo WHERE data -> 'platform'->>'os' ='mac' and data -> 'platform'->>'version'=$1"
+	const osMacVersionOtherNotEql = " data -> 'platform'->>'version' != "
+	result.Platform.Version.Mac.Other = countOther(osMacVersionOtherQuery, osMacVersionOtherNotEql, "10.12")
+
 	//const osOtherQuery = "select count( data -> 'platform'->>'os') as os  from generalInfo where  data -> 'platform'->>'os' != $1 and data -> 'platform'->>'os'!=$2"
 	//result.Platform.Os.Other = countOther(osOtherQuery, "windows", "linux")
 
@@ -96,12 +127,12 @@ func CollectData() {
 	result.CPU.Architecture.Other = countOther(archCPUOtherQuery, archCPUOtherNotEql, "x86_64", "i386")
 
 	const coreCountQuery = "select data -> 'cpu'->>'count'   from generalInfo  where data -> 'cpu'->>'count' = $1"
-	result.CPU.Cores.One = count(coreCountQuery, "1")
-	result.CPU.Cores.Two = count(coreCountQuery, "2")
-	result.CPU.Cores.Three = count(coreCountQuery, "3")
-	result.CPU.Cores.Four = count(coreCountQuery, "4")
-	result.CPU.Cores.Six = count(coreCountQuery, "6")
-	result.CPU.Cores.Eight = count(coreCountQuery, "8")
+	result.CPU.Cores.C1 = count(coreCountQuery, "1")
+	result.CPU.Cores.C2 = count(coreCountQuery, "2")
+	result.CPU.Cores.C3 = count(coreCountQuery, "3")
+	result.CPU.Cores.C4 = count(coreCountQuery, "4")
+	result.CPU.Cores.C6 = count(coreCountQuery, "6")
+	result.CPU.Cores.C8 = count(coreCountQuery, "8")
 
 	const coreCountOtherQuery = "select count( data -> 'cpu'->>'count')   from generalInfo where "
 	const coreCountOtherNotEql = "data -> 'cpu'->>'count' !="
@@ -109,10 +140,20 @@ func CollectData() {
 
 	const compilerTypeQuery = "select count(data->'compiler'->>'type') from generalInfo where data->'compiler'->>'type' = $1"
 	result.Compiler.Type.GCC = count(compilerTypeQuery, "GCC")
+	result.Compiler.Type.Clang = count(compilerTypeQuery, "Clang")
+	result.Compiler.Type.MSVC = count(compilerTypeQuery, "MSVC")
 
 	const compilerTypeOtherQuery = "select count(data->'compiler'->>'type') from generalInfo where "
 	const compilerTypeOtherNotEql = "data->'compiler'->>'type' !="
-	result.Compiler.Type.Other = countOther(compilerTypeOtherQuery, compilerTypeOtherNotEql, "GCC")
+	result.Compiler.Type.Other = countOther(compilerTypeOtherQuery, compilerTypeOtherNotEql, "GCC", "Clang", "MSVC")
+
+	const localeLanguageQuery = "select count(data->'locale'->>'language') from generalInfo where data->'locale'->>'language' = $1"
+	result.Locale.Language.English = count(localeLanguageQuery, "English")
+	result.Locale.Language.Russian = count(localeLanguageQuery, "Russian")
+
+	const localeLanguageOtherQuery = "select count(data->'locale'->>'language') from generalInfo where "
+	const localeLanguageOtherNotEql = "data->'locale'->>'language' !="
+	result.Locale.Language.Other = countOther(localeLanguageOtherQuery, localeLanguageOtherNotEql, "English", "Russian")
 
 	fmt.Println("BEFORE JSON")
 
