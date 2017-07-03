@@ -1,13 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	sw "kritaServers/backend/goserver/server"
 	"net/http"
-	"time"
-
-	_ "github.com/lib/pq"
 )
 
 type ColorGroup struct {
@@ -26,32 +24,29 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	sw.InsertGeneralInfo(bodyBuffer)
 }
 
-func viewHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "<h1>Last requests</h1><div>%s</div>", "in console")
+type Person struct {
+	Name  string
+	Phone string
 }
 
 func main() {
 	fmt.Printf("hello")
-	//	connectionString :=
-	//	fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%s sslmode=disable", user, password, dbname, host, port)
+	var m map[string]interface{}
 	sw.InitDB()
-	defer sw.Db.Close()
+	defer sw.Session.Close()
+
+	jsonString := `{"Name":"Alice","Body":"Hello","Time":1294706395881547000}`
+	err := json.Unmarshal([]byte(jsonString), &m)
+	if err != nil {
+		return
+	}
+
+	c := sw.Session.DB("d").C("collectio2n")
+	c.Insert(m)
 
 	http.HandleFunc("/receiver/submit/org.krita.krita", handler)
 	http.HandleFunc("/GoogleLogin", sw.HandleGoogleLogin)
 	http.HandleFunc("/GoogleCallback", sw.HandleGoogleCallback)
-	http.HandleFunc("/agregatedData", sw.AgregatedDataHandler)
 
-	http.HandleFunc("/", viewHandler)
-
-	//ticker := time.NewTicker(time.Minute * 2)
-	ticker := time.NewTicker(time.Minute * 10)
-
-	go func() {
-		for t := range ticker.C {
-			sw.CollectData()
-			fmt.Println("Tick at", t)
-		}
-	}()
 	http.ListenAndServe(":8080", nil)
 }

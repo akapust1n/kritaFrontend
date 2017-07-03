@@ -1,6 +1,8 @@
 package server
 
-import "database/sql"
+import (
+	"gopkg.in/mgo.v2"
+)
 
 func checkErr(err error) {
 	if err != nil {
@@ -8,13 +10,12 @@ func checkErr(err error) {
 	}
 }
 
-var Db *sql.DB
+var Session *mgo.Session
 
 func InitDB() {
 	var err error
-	Db, err = sql.Open("postgres", "user=root password=1111 dbname=root") //небезопасно, но пока сойдет
-
-	err = Db.Ping()
+	Session, err = mgo.Dial("mongodb://localhost")
 
 	checkErr(err)
+
 }
