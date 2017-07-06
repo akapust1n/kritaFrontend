@@ -16,3 +16,13 @@ func InsertGeneralInfo(request []byte) {
 	fmt.Println("inserted info!")
 
 }
+
+func InsertToolInfo(request []byte) {
+	var err error
+	var tools []md.Tool
+	err = json.Unmarshal(request, &tools)
+	checkErr(err)
+	c := Session.DB("telemetry").C("tools")
+	c.Insert(tools)
+	fmt.Println("inserted TOOL info!")
+}

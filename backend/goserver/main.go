@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	sw "kritaServers/backend/goserver/server"
@@ -14,14 +13,23 @@ type ColorGroup struct {
 	Colors []string
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
+func handlerInstall(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
 	fmt.Printf("REQUEST")
 	bodyBuffer, _ := ioutil.ReadAll(r.Body)
 
+	// fmt.Printf("after parse")
+	// fmt.Println(string(bodyBuffer))
+	sw.InsertGeneralInfo(bodyBuffer)
+}
+func handlerTools(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
+	fmt.Printf("hadle tools!")
+	bodyBuffer, _ := ioutil.ReadAll(r.Body)
+
 	fmt.Printf("after parse")
 	fmt.Println(string(bodyBuffer))
-	sw.InsertGeneralInfo(bodyBuffer)
+	sw.InsertToolInfo(bodyBuffer)
 }
 
 type Person struct {
@@ -31,20 +39,12 @@ type Person struct {
 
 func main() {
 	fmt.Printf("hello")
-	var m map[string]interface{}
 	sw.InitDB()
 	defer sw.Session.Close()
 
-	jsonString := `{"Name":"Alice","Body":"Hello","Time":1294706395881547000}`
-	err := json.Unmarshal([]byte(jsonString), &m)
-	if err != nil {
-		return
-	}
+	http.HandleFunc("/install/receiver/submit/org.krita.krita/", handlerInstall)
+	http.HandleFunc("/tools/receiver/submit/org.krita.krita/", handlerTools)
 
-	c := sw.Session.DB("d").C("collectio2n")
-	c.Insert(m)
-
-	http.HandleFunc("/receiver/submit/org.krita.krita", handler)
 	http.HandleFunc("/GoogleLogin", sw.HandleGoogleLogin)
 	http.HandleFunc("/GoogleCallback", sw.HandleGoogleCallback)
 
