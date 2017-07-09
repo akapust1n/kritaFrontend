@@ -19,7 +19,7 @@ func InsertGeneralInfo(request []byte) {
 
 func InsertToolInfo(request []byte) {
 	var err error
-	var tools []md.Tool
+	var tools md.Tool
 	err = json.Unmarshal(request, &tools)
 	checkErr(err)
 	c := Session.DB("telemetry").C("tools")

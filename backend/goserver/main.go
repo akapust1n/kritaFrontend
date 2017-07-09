@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	sw "kritaServers/backend/goserver/server"
 	"net/http"
+	"time"
 )
 
 type ColorGroup struct {
@@ -19,7 +20,7 @@ func handlerInstall(w http.ResponseWriter, r *http.Request) {
 	bodyBuffer, _ := ioutil.ReadAll(r.Body)
 
 	// fmt.Printf("after parse")
-	// fmt.Println(string(bodyBuffer))
+	fmt.Println(string(bodyBuffer))
 	sw.InsertGeneralInfo(bodyBuffer)
 }
 func handlerTools(w http.ResponseWriter, r *http.Request) {
@@ -27,14 +28,9 @@ func handlerTools(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("hadle tools!")
 	bodyBuffer, _ := ioutil.ReadAll(r.Body)
 
-	fmt.Printf("after parse")
-	fmt.Println(string(bodyBuffer))
+	//fmt.Printf("after parse")
+	//fmt.Println(string(bodyBuffer))
 	sw.InsertToolInfo(bodyBuffer)
-}
-
-type Person struct {
-	Name  string
-	Phone string
 }
 
 func main() {
@@ -47,6 +43,13 @@ func main() {
 
 	http.HandleFunc("/GoogleLogin", sw.HandleGoogleLogin)
 	http.HandleFunc("/GoogleCallback", sw.HandleGoogleCallback)
+	ticker := time.NewTicker(time.Second * 10)
 
+	go func() {
+		for t := range ticker.C {
+			sw.AgregateInstalInfo()
+			fmt.Println("Tick at", t)
+		}
+	}()
 	http.ListenAndServe(":8080", nil)
 }
