@@ -7,8 +7,10 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+var agreagtedData md.CollectedData
+
 func getFloat64(n int, err error) float64 {
-	checkErr(err)
+	CheckErr(err)
 	return float64(n)
 }
 func checkOtherCount(count float64) float64 {
@@ -81,8 +83,10 @@ func AgregateInstalInfo() {
 	result.Locale.Language.Russian = getFloat64(c.Find(bson.M{"locale.language": "Russian"}).Count())
 	result.Locale.Language.Other = countRecords - result.Locale.Language.English - result.Locale.Language.Russian
 	result.Locale.Language.Other = checkOtherCount(result.Locale.Language.Other)
-	fmt.Println("COUNT OS UBUNTU")
-	fmt.Println(result.Platform.Version.Linux.Ubuntu1604)
-	fmt.Println(result.Platform.Version.Linux.Ubuntu1404)
+	//finish
+	agreagtedData = result
+}
 
+func GetAgregatedData() md.CollectedData {
+	return agreagtedData
 }

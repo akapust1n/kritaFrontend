@@ -4,7 +4,7 @@ import (
 	"gopkg.in/mgo.v2"
 )
 
-func checkErr(err error) {
+func CheckErr(err error) {
 	if err != nil {
 		panic(err)
 	}
@@ -16,6 +16,6 @@ func InitDB() {
 	var err error
 	Session, err = mgo.Dial("mongodb://localhost")
 
-	checkErr(err)
+	CheckErr(err)
 
 }

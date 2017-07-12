@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	sw "kritaServers/backend/goserver/server"
@@ -32,6 +33,11 @@ func handlerTools(w http.ResponseWriter, r *http.Request) {
 	//fmt.Println(string(bodyBuffer))
 	sw.InsertToolInfo(bodyBuffer)
 }
+func handlerAgregatedData(w http.ResponseWriter, r *http.Request) {
+	result, err := json.Marshal(sw.GetAgregatedData())
+	sw.CheckErr(err)
+	w.Write(result)
+}
 
 func main() {
 	fmt.Printf("hello")
@@ -40,6 +46,7 @@ func main() {
 
 	http.HandleFunc("/install/receiver/submit/org.krita.krita/", handlerInstall)
 	http.HandleFunc("/tools/receiver/submit/org.krita.krita/", handlerTools)
+	http.HandleFunc("/agregatedData", handlerAgregatedData)
 
 	http.HandleFunc("/GoogleLogin", sw.HandleGoogleLogin)
 	http.HandleFunc("/GoogleCallback", sw.HandleGoogleCallback)
