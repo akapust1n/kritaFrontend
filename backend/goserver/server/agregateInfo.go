@@ -86,7 +86,17 @@ func AgregateInstalInfo() {
 	//finish
 	agreagtedData = result
 }
+func AgregateToolsInfo() {
+}
+func GetAgregatedData(dataType string) md.CollectedData {
 
-func GetAgregatedData() md.CollectedData {
+	switch dataType {
+	case "install":
+		return agreagtedData
+	case "tools":
+	default:
+		var err md.CustomError
+		err.Message = "Wrong request"
+	}
 	return agreagtedData
 }

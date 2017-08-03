@@ -67,4 +67,7 @@ type CollectedData struct {
 			Other   float64
 		}
 	}
+	Tools struct {
+		
+	}
 }
