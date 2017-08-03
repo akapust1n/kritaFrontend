@@ -52,6 +52,9 @@ func handlerActions(w http.ResponseWriter, r *http.Request) {
 	//fmt.Println(string(bodyBuffer))
 	sw.InsertActionInfo(bodyBuffer)
 }
+func handlerHello(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Hello!!")
+}
 
 func main() {
 	fmt.Printf("hello")
@@ -68,6 +71,8 @@ func main() {
 
 	http.HandleFunc("/GoogleLogin", sw.HandleGoogleLogin)
 	http.HandleFunc("/GoogleCallback", sw.HandleGoogleCallback)
+	http.HandleFunc("/", handlerHello)
+
 	ticker := time.NewTicker(time.Hour * 1)
 
 	go func() {
