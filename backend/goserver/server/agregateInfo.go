@@ -33,13 +33,14 @@ func countActionsUse(name string) float64 {
 	err = pipe.All(&results)
 	CheckErr(err)
 	if len(results) > 0 {
-		num, _ := results[0][name].(float64)
+		num, _ := results[0]["total_count"].(float64)
+
 		return num
 	}
 	return 0
 }
 func AgregateActions() {
-	agreagtedData.Actions.Add_new_paint_layer = countActionsUse("Add_new_paint_layer")
+	agreagtedData.Actions.Add_new_paint_layer = countActionsUse("add_new_paint_layer")
 	agreagtedData.Actions.Clear = countActionsUse("clear")
 	agreagtedData.Actions.Copy_layer_clipboard = countActionsUse("copy_layer_clipboard")
 	agreagtedData.Actions.Cut_layer_clipboard = countActionsUse("сut_layer_clipboard")
