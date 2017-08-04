@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/json"
 	"fmt"
 	md "kritaServers/backend/goserver/server/models"
 
@@ -20,71 +21,106 @@ func checkOtherCount(count float64) float64 {
 	return count
 
 }
+func countActionsUse(name string) float64 {
+	results := []bson.M{}
+	c := Session.DB("telemetry").C("actions")
+	pipe := c.Pipe([]bson.M{{"$unwind": "$actions"}, {"$match": bson.M{"actions.actionname": name}}, {"$group": bson.M{"_id": "$actions.actionname", "total_count": bson.M{"$sum": "$actions.countuse"}}}})
+	//fmt.Println(pipe)
+	resp := []bson.M{}
+	err := pipe.All(&resp)
+	CheckErr(err)
+	//fmt.Println(resp) // simple print proving it's working
+	err = pipe.All(&results)
+	CheckErr(err)
+	if len(results) > 0 {
+		num, _ := results[0][name].(float64)
+		return num
+	}
+	return 0
+}
+func AgregateActions() {
+	agreagtedData.Actions.Add_new_paint_layer = countActionsUse("Add_new_paint_layer")
+	agreagtedData.Actions.Clear = countActionsUse("clear")
+	agreagtedData.Actions.Copy_layer_clipboard = countActionsUse("copy_layer_clipboard")
+	agreagtedData.Actions.Cut_layer_clipboard = countActionsUse("сut_layer_clipboard")
+	agreagtedData.Actions.Edit_cut = countActionsUse("edit_cut")
+	agreagtedData.Actions.Edit_redo = countActionsUse("edit_redo")
+	agreagtedData.Actions.Edit_undo = countActionsUse("edit_undo")
+	agreagtedData.Actions.File_new = countActionsUse("file_new")
+	agreagtedData.Actions.Fill_selection_background_color = countActionsUse("fill_selection_background_color")
+	agreagtedData.Actions.Fill_selection_foreground_color = countActionsUse("fill_selection_foreground_color")
+	agreagtedData.Actions.Fill_selection_pattern = countActionsUse("fill_selection_pattern")
+	agreagtedData.Actions.Paste_at = countActionsUse("paste_at")
+	agreagtedData.Actions.Stroke_selection = countActionsUse("stroke_selection")
+	agreagtedData.Actions.View_show_canvas_only = countActionsUse("view_show_canvas_only")
 
+}
 func AgregateInstalInfo() {
-	var result md.CollectedData
 	c := Session.DB("telemetry").C("installInfo")
 	//Some error takes place. We lose a little bit of data
 	countRecords := getFloat64(c.Find(bson.M{}).Count())
 
 	//compiler
-	result.Compiler.Type.GCC = getFloat64(c.Find(bson.M{"compiler.type": "GCC"}).Count())
-	result.Compiler.Type.Clang = getFloat64(c.Find(bson.M{"compiler.type": "Clang"}).Count())
-	result.Compiler.Type.MSVC = getFloat64(c.Find(bson.M{"compiler.type": "MSVC"}).Count())
-	result.Compiler.Type.Other = countRecords - result.Compiler.Type.GCC - result.Compiler.Type.Clang - result.Compiler.Type.MSVC
-	result.Compiler.Type.Other = checkOtherCount(result.Compiler.Type.Other)
+	agreagtedData.Compiler.Type.GCC = getFloat64(c.Find(bson.M{"compiler.type": "GCC"}).Count())
+	agreagtedData.Compiler.Type.Clang = getFloat64(c.Find(bson.M{"compiler.type": "Clang"}).Count())
+	agreagtedData.Compiler.Type.MSVC = getFloat64(c.Find(bson.M{"compiler.type": "MSVC"}).Count())
+	agreagtedData.Compiler.Type.Other = countRecords - agreagtedData.Compiler.Type.GCC - agreagtedData.Compiler.Type.Clang - agreagtedData.Compiler.Type.MSVC
+	agreagtedData.Compiler.Type.Other = checkOtherCount(agreagtedData.Compiler.Type.Other)
 	//os
-	result.Platform.Os.Linux = getFloat64(c.Find(bson.M{"platform.os": "linux"}).Count())
-	result.Platform.Os.Windows = getFloat64(c.Find(bson.M{"platform.os": "windows"}).Count())
-	result.Platform.Os.Mac = getFloat64(c.Find(bson.M{"platform.os": "mac"}).Count())
-	result.Platform.Os.Other = countRecords - result.Platform.Os.Linux - result.Platform.Os.Windows - result.Platform.Os.Mac
-	result.Platform.Os.Other = checkOtherCount(result.Platform.Os.Other)
+	agreagtedData.Platform.Os.Linux = getFloat64(c.Find(bson.M{"platform.os": "linux"}).Count())
+	agreagtedData.Platform.Os.Windows = getFloat64(c.Find(bson.M{"platform.os": "windows"}).Count())
+	agreagtedData.Platform.Os.Mac = getFloat64(c.Find(bson.M{"platform.os": "mac"}).Count())
+	agreagtedData.Platform.Os.Other = countRecords - agreagtedData.Platform.Os.Linux - agreagtedData.Platform.Os.Windows - agreagtedData.Platform.Os.Mac
+	agreagtedData.Platform.Os.Other = checkOtherCount(agreagtedData.Platform.Os.Other)
 	fmt.Println("LINUX")
-	fmt.Println(result.Platform.Os.Linux)
-	fmt.Println(result.Platform.Os.Other)
+	fmt.Println(agreagtedData.Platform.Os.Linux)
+	fmt.Println(agreagtedData.Platform.Os.Other)
 
 	//version os windows
-	result.Platform.Version.Windows.V7 = getFloat64(c.Find(bson.M{"platform.version": "7"}).Count())
-	result.Platform.Version.Windows.V8 = getFloat64(c.Find(bson.M{"platform.version": "8"}).Count())
-	result.Platform.Version.Windows.V81 = getFloat64(c.Find(bson.M{"platform.version": "8.1"}).Count())
-	result.Platform.Version.Windows.V10 = getFloat64(c.Find(bson.M{"platform.version": "10"}).Count())
-	result.Platform.Version.Windows.Other = result.Platform.Os.Windows - result.Platform.Version.Windows.V7 - result.Platform.Version.Windows.V8 - result.Platform.Version.Windows.V81 - result.Platform.Version.Windows.V10
-	result.Platform.Version.Windows.Other = checkOtherCount(result.Platform.Version.Windows.Other)
+	agreagtedData.Platform.Version.Windows.V7 = getFloat64(c.Find(bson.M{"platform.version": "7"}).Count())
+	agreagtedData.Platform.Version.Windows.V8 = getFloat64(c.Find(bson.M{"platform.version": "8"}).Count())
+	agreagtedData.Platform.Version.Windows.V81 = getFloat64(c.Find(bson.M{"platform.version": "8.1"}).Count())
+	agreagtedData.Platform.Version.Windows.V10 = getFloat64(c.Find(bson.M{"platform.version": "10"}).Count())
+	agreagtedData.Platform.Version.Windows.Other = agreagtedData.Platform.Os.Windows - agreagtedData.Platform.Version.Windows.V7 - agreagtedData.Platform.Version.Windows.V8 - agreagtedData.Platform.Version.Windows.V81 - agreagtedData.Platform.Version.Windows.V10
+	agreagtedData.Platform.Version.Windows.Other = checkOtherCount(agreagtedData.Platform.Version.Windows.Other)
 
 	//version os linux
 	//не уверен, что именно так пишется нужные версии linux
-	result.Platform.Version.Linux.Ubuntu1404 = getFloat64(c.Find(bson.M{"platform.version": "ubuntu-14.04"}).Count())
-	result.Platform.Version.Linux.Ubuntu1410 = getFloat64(c.Find(bson.M{"platform.version": "ubuntu-14.10"}).Count())
-	result.Platform.Version.Linux.Ubuntu1504 = getFloat64(c.Find(bson.M{"platform.version": "ubuntu-15.04"}).Count())
-	result.Platform.Version.Linux.Ubuntu1510 = getFloat64(c.Find(bson.M{"platform.version": "ubuntu-15.10"}).Count())
-	result.Platform.Version.Linux.Ubuntu1604 = getFloat64(c.Find(bson.M{"platform.version": "ubuntu-16.04"}).Count())
-	result.Platform.Version.Linux.Other = result.Platform.Os.Linux - result.Platform.Version.Linux.Ubuntu1404 - result.Platform.Version.Linux.Ubuntu1410 - result.Platform.Version.Linux.Ubuntu1504 - result.Platform.Version.Linux.Ubuntu1510 - result.Platform.Version.Linux.Ubuntu1604 - result.Platform.Version.Linux.Ubuntu1610 - result.Platform.Version.Linux.Ubuntu1704
-	result.Platform.Version.Linux.Other = checkOtherCount(result.Platform.Version.Linux.Other)
+	agreagtedData.Platform.Version.Linux.Ubuntu1404 = getFloat64(c.Find(bson.M{"platform.version": "ubuntu-14.04"}).Count())
+	agreagtedData.Platform.Version.Linux.Ubuntu1410 = getFloat64(c.Find(bson.M{"platform.version": "ubuntu-14.10"}).Count())
+	agreagtedData.Platform.Version.Linux.Ubuntu1504 = getFloat64(c.Find(bson.M{"platform.version": "ubuntu-15.04"}).Count())
+	agreagtedData.Platform.Version.Linux.Ubuntu1510 = getFloat64(c.Find(bson.M{"platform.version": "ubuntu-15.10"}).Count())
+	agreagtedData.Platform.Version.Linux.Ubuntu1604 = getFloat64(c.Find(bson.M{"platform.version": "ubuntu-16.04"}).Count())
+	agreagtedData.Platform.Version.Linux.Other = agreagtedData.Platform.Os.Linux - agreagtedData.Platform.Version.Linux.Ubuntu1404 - agreagtedData.Platform.Version.Linux.Ubuntu1410 - agreagtedData.Platform.Version.Linux.Ubuntu1504 - agreagtedData.Platform.Version.Linux.Ubuntu1510 - agreagtedData.Platform.Version.Linux.Ubuntu1604 - agreagtedData.Platform.Version.Linux.Ubuntu1610 - agreagtedData.Platform.Version.Linux.Ubuntu1704
+	agreagtedData.Platform.Version.Linux.Other = checkOtherCount(agreagtedData.Platform.Version.Linux.Other)
 
-	result.Platform.Version.Mac.V1012 = getFloat64(c.Find(bson.M{"platform.version": "10.12"}).Count())
-	result.Platform.Version.Mac.Other = result.Platform.Os.Mac - result.Platform.Version.Mac.V1012
-	result.Platform.Version.Mac.Other = checkOtherCount(result.Platform.Version.Linux.Other)
+	agreagtedData.Platform.Version.Mac.V1012 = getFloat64(c.Find(bson.M{"platform.version": "10.12"}).Count())
+	agreagtedData.Platform.Version.Mac.Other = agreagtedData.Platform.Os.Mac - agreagtedData.Platform.Version.Mac.V1012
+	agreagtedData.Platform.Version.Mac.Other = checkOtherCount(agreagtedData.Platform.Version.Linux.Other)
 
 	//cpu
-	result.CPU.Architecture.X86_64 = getFloat64(c.Find(bson.M{"cpu.architecture": "x86_64"}).Count())
-	result.CPU.Architecture.X86 = getFloat64(c.Find(bson.M{"cpu.architecture": "i386"}).Count())
-	result.CPU.Architecture.Other = countRecords - result.CPU.Architecture.X86_64 - result.CPU.Architecture.X86
-	result.CPU.Architecture.Other = checkOtherCount(result.CPU.Architecture.Other)
+	agreagtedData.CPU.Architecture.X86_64 = getFloat64(c.Find(bson.M{"cpu.architecture": "x86_64"}).Count())
+	agreagtedData.CPU.Architecture.X86 = getFloat64(c.Find(bson.M{"cpu.architecture": "i386"}).Count())
+	agreagtedData.CPU.Architecture.Other = countRecords - agreagtedData.CPU.Architecture.X86_64 - agreagtedData.CPU.Architecture.X86
+	agreagtedData.CPU.Architecture.Other = checkOtherCount(agreagtedData.CPU.Architecture.Other)
 
-	result.CPU.Cores.C1 = getFloat64(c.Find(bson.M{"cpu.count": "1"}).Count())
-	result.CPU.Cores.C2 = getFloat64(c.Find(bson.M{"cpu.count": "2"}).Count())
-	result.CPU.Cores.C3 = getFloat64(c.Find(bson.M{"cpu.count": "3"}).Count())
-	result.CPU.Cores.C4 = getFloat64(c.Find(bson.M{"cpu.count": "4"}).Count())
-	result.CPU.Cores.C6 = getFloat64(c.Find(bson.M{"cpu.count": "6"}).Count())
-	result.CPU.Cores.C8 = getFloat64(c.Find(bson.M{"cpu.count": "8"}).Count())
-	result.CPU.Cores.Other = countRecords - result.CPU.Cores.C1 - result.CPU.Cores.C2 - result.CPU.Cores.C3 - result.CPU.Cores.C4 - result.CPU.Cores.C6 - result.CPU.Cores.C8
+	agreagtedData.CPU.Cores.C1 = getFloat64(c.Find(bson.M{"cpu.count": "1"}).Count())
+	agreagtedData.CPU.Cores.C2 = getFloat64(c.Find(bson.M{"cpu.count": "2"}).Count())
+	agreagtedData.CPU.Cores.C3 = getFloat64(c.Find(bson.M{"cpu.count": "3"}).Count())
+	agreagtedData.CPU.Cores.C4 = getFloat64(c.Find(bson.M{"cpu.count": "4"}).Count())
+	agreagtedData.CPU.Cores.C6 = getFloat64(c.Find(bson.M{"cpu.count": "6"}).Count())
+	agreagtedData.CPU.Cores.C8 = getFloat64(c.Find(bson.M{"cpu.count": "8"}).Count())
+	agreagtedData.CPU.Cores.Other = countRecords - agreagtedData.CPU.Cores.C1 - agreagtedData.CPU.Cores.C2 - agreagtedData.CPU.Cores.C3 - agreagtedData.CPU.Cores.C4 - agreagtedData.CPU.Cores.C6 - agreagtedData.CPU.Cores.C8
 
-	result.Locale.Language.English = getFloat64(c.Find(bson.M{"locale.language": "English"}).Count())
-	result.Locale.Language.Russian = getFloat64(c.Find(bson.M{"locale.language": "Russian"}).Count())
-	result.Locale.Language.Other = countRecords - result.Locale.Language.English - result.Locale.Language.Russian
-	result.Locale.Language.Other = checkOtherCount(result.Locale.Language.Other)
-	//finish
-	agreagtedData = result
+	agreagtedData.Locale.Language.English = getFloat64(c.Find(bson.M{"locale.language": "English"}).Count())
+	agreagtedData.Locale.Language.Russian = getFloat64(c.Find(bson.M{"locale.language": "Russian"}).Count())
+	agreagtedData.Locale.Language.Other = countRecords - agreagtedData.Locale.Language.English - agreagtedData.Locale.Language.Russian
+	agreagtedData.Locale.Language.Other = checkOtherCount(agreagtedData.Locale.Language.Other)
+
+}
+func Agregated() string {
+	out, _ := json.Marshal(agreagtedData)
+	return string(out)
 }
 func AgregateToolsInfo() {
 }

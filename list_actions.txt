@@ -1,0 +1,16 @@
+add_new_paint_layer
+clear
+copy_layer_clipboard
+cut_layer_clipboard
+edit_cut
+edit_redo
+edit_undo
+file_new
+fill_selection_background_color
+fill_selection_foreground_color
+fill_selection_pattern
+paste_at
+paste_layer_from_clipboard
+paste_new
+stroke_selection
+view_show_canvas_only

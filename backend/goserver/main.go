@@ -26,7 +26,7 @@ func handlerInstall(w http.ResponseWriter, r *http.Request) {
 }
 func handlerTools(w http.ResponseWriter, r *http.Request) {
 	bodyBuffer, _ := ioutil.ReadAll(r.Body)
-	//fmt.Println(string(bodyBuffer))
+	//	fmt.Println(string(bodyBuffer))
 	sw.InsertToolInfo(bodyBuffer)
 }
 func handlerImageProperties(w http.ResponseWriter, r *http.Request) {
@@ -35,9 +35,9 @@ func handlerImageProperties(w http.ResponseWriter, r *http.Request) {
 	sw.InsertImageInfo(bodyBuffer)
 }
 func handlerAsserts(w http.ResponseWriter, r *http.Request) {
-	bodyBuffer, _ := ioutil.ReadAll(r.Body)
+	//	bodyBuffer, _ := ioutil.ReadAll(r.Body)
 	fmt.Printf("Asserts")
-	fmt.Println(string(bodyBuffer))
+	//	fmt.Println(string(bodyBuffer))
 	//	sw.InsertAssertInfo(bodyBuffer)
 }
 func handlerAgregatedData(w http.ResponseWriter, r *http.Request) {
@@ -49,11 +49,12 @@ func handlerAgregatedData(w http.ResponseWriter, r *http.Request) {
 }
 func handlerActions(w http.ResponseWriter, r *http.Request) {
 	bodyBuffer, _ := ioutil.ReadAll(r.Body)
-	//fmt.Println(string(bodyBuffer))
+	fmt.Println(string(bodyBuffer))
 	sw.InsertActionInfo(bodyBuffer)
 }
 func handlerHello(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello!!")
+	temp := sw.Agregated()
+	fmt.Fprintf(w, temp)
 }
 
 func main() {
@@ -73,12 +74,19 @@ func main() {
 	http.HandleFunc("/GoogleCallback", sw.HandleGoogleCallback)
 	http.HandleFunc("/", handlerHello)
 
-	ticker := time.NewTicker(time.Hour * 1)
+	ticker := time.NewTicker(time.Minute * 2)
+	tickerActions := time.NewTicker(time.Minute * 3)
 
 	go func() {
 		for t := range ticker.C {
 			sw.AgregateInstalInfo()
 			fmt.Println("Tick at", t)
+		}
+	}()
+	go func() {
+		for t := range tickerActions.C {
+			sw.AgregateActions()
+			fmt.Println("Tick actions at", t)
 		}
 	}()
 	http.ListenAndServe(":8080", nil)
