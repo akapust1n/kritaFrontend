@@ -1,9 +1,11 @@
 package server
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	md "kritaServers/backend/goserver/server/models"
+	"os"
 
 	"gopkg.in/mgo.v2/bson"
 )
@@ -39,21 +41,62 @@ func countActionsUse(name string) float64 {
 	}
 	return 0
 }
+func countToolsUse(name string) float64 {
+	results := []bson.M{}
+	c := Session.DB("telemetry").C("tools")
+	pipe := c.Pipe([]bson.M{{"$unwind": "$tools"}, {"$match": bson.M{"tools.toolname": name}}, {"$group": bson.M{"_id": "$tools.toolname", "total_count": bson.M{"$sum": "$tools.countuse"}}}})
+	//fmt.Println(pipe)
+	resp := []bson.M{}
+	err := pipe.All(&resp)
+	CheckErr(err)
+	//fmt.Println(resp) // simple print proving it's working
+	err = pipe.All(&results)
+	CheckErr(err)
+	fmt.Println(len(results))
+	if len(results) > 0 {
+		num, _ := results[0]["total_count"].(float64)
+		fmt.Println(name, num)
+		return num
+	}
+	return 0
+}
 func AgregateActions() {
-	agreagtedData.Actions.Add_new_paint_layer = countActionsUse("add_new_paint_layer")
-	agreagtedData.Actions.Clear = countActionsUse("clear")
-	agreagtedData.Actions.Copy_layer_clipboard = countActionsUse("copy_layer_clipboard")
-	agreagtedData.Actions.Cut_layer_clipboard = countActionsUse("сut_layer_clipboard")
-	agreagtedData.Actions.Edit_cut = countActionsUse("edit_cut")
-	agreagtedData.Actions.Edit_redo = countActionsUse("edit_redo")
-	agreagtedData.Actions.Edit_undo = countActionsUse("edit_undo")
-	agreagtedData.Actions.File_new = countActionsUse("file_new")
-	agreagtedData.Actions.Fill_selection_background_color = countActionsUse("fill_selection_background_color")
-	agreagtedData.Actions.Fill_selection_foreground_color = countActionsUse("fill_selection_foreground_color")
-	agreagtedData.Actions.Fill_selection_pattern = countActionsUse("fill_selection_pattern")
-	agreagtedData.Actions.Paste_at = countActionsUse("paste_at")
-	agreagtedData.Actions.Stroke_selection = countActionsUse("stroke_selection")
-	agreagtedData.Actions.View_show_canvas_only = countActionsUse("view_show_canvas_only")
+	// agreagtedData.Actions.Add_new_paint_layer = countActionsUse("add_new_paint_layer")
+	// agreagtedData.Actions.Clear = countActionsUse("clear")
+	// agreagtedData.Actions.Copy_layer_clipboard = countActionsUse("copy_layer_clipboard")
+	// agreagtedData.Actions.Cut_layer_clipboard = countActionsUse("сut_layer_clipboard")
+	// agreagtedData.Actions.Edit_cut = countActionsUse("edit_cut")
+	// agreagtedData.Actions.Edit_redo = countActionsUse("edit_redo")
+	// agreagtedData.Actions.Edit_undo = countActionsUse("edit_undo")
+	// agreagtedData.Actions.File_new = countActionsUse("file_new")
+	// agreagtedData.Actions.Fill_selection_background_color = countActionsUse("fill_selection_background_color")
+	// agreagtedData.Actions.Fill_selection_foreground_color = countActionsUse("fill_selection_foreground_color")
+	// agreagtedData.Actions.Fill_selection_pattern = countActionsUse("fill_selection_pattern")
+	// agreagtedData.Actions.Paste_at = countActionsUse("paste_at")
+	// agreagtedData.Actions.Stroke_selection = countActionsUse("stroke_selection")
+	// agreagtedData.Actions.View_show_canvas_only = countActionsUse("view_show_canvas_only")
+	file, err := os.Open("list_actions.txt")
+	CheckErr(err)
+	defer file.Close()
+
+	var action md.ActionCollected
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		action.Name = scanner.Text()
+		action.CountUse = countActionsUse(action.Name)
+		agreagtedData.Actions = append(agreagtedData.Actions, action)
+	}
+
+	// check for errors
+	err = scanner.Err()
+	CheckErr(err)
+
+}
+
+func AgregateTools() {
+	agreagtedData.Tools.KisToolBrush = countToolsUse("Tool/Activate/KritaShape/KisToolBrush")
+	agreagtedData.Tools.KisToolLine = countToolsUse("Tool/Activate/KritaShape/KisToolLine")
 
 }
 func AgregateInstalInfo() {

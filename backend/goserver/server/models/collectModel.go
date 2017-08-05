@@ -1,5 +1,9 @@
 package models
 
+type ActionCollected struct {
+	CountUse float64
+	Name     string
+}
 type CollectedData struct {
 	Platform struct {
 		Os struct {
@@ -67,24 +71,11 @@ type CollectedData struct {
 			Other   float64
 		}
 	}
+
+	Actions []ActionCollected
+
 	Tools struct {
-	}
-	Actions struct {
-		Add_new_paint_layer             float64
-		Clear                           float64
-		Copy_layer_clipboard            float64
-		Cut_layer_clipboard             float64
-		Edit_cut                        float64
-		Edit_redo                       float64
-		Edit_undo                       float64
-		File_new                        float64
-		Fill_selection_background_color float64
-		Fill_selection_foreground_color float64
-		Fill_selection_pattern          float64
-		Paste_at                        float64
-		Paste_layer_from_clipboard      float64
-		Paste_new                       float64
-		Stroke_selection                float64
-		View_show_canvas_only           float64
+		KisToolBrush float64
+		KisToolLine  float64
 	}
 }

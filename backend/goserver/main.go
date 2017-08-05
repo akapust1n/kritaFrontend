@@ -75,7 +75,7 @@ func main() {
 	http.HandleFunc("/", handlerHello)
 
 	ticker := time.NewTicker(time.Minute * 2)
-	tickerActions := time.NewTicker(time.Minute * 3)
+	tickerActions := time.NewTicker(time.Second * 10)
 
 	go func() {
 		for t := range ticker.C {
@@ -86,6 +86,7 @@ func main() {
 	go func() {
 		for t := range tickerActions.C {
 			sw.AgregateActions()
+			sw.AgregateTools()
 			fmt.Println("Tick actions at", t)
 		}
 	}()
