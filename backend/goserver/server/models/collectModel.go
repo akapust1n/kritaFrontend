@@ -4,6 +4,10 @@ type ActionCollected struct {
 	CountUse float64
 	Name     string
 }
+type ToolsCollected struct {
+	CountUse float64
+	Name     string
+}
 type CollectedData struct {
 	Platform struct {
 		Os struct {
@@ -72,7 +76,9 @@ type CollectedData struct {
 		}
 	}
 
-	Actions []ActionCollected
+	Actions       []ActionCollected
+	ToolsUse      []ToolsCollected
+	ToolsActivate []ToolsCollected
 
 	Tools struct {
 		KisToolBrush float64

@@ -26,7 +26,6 @@ func handlerInstall(w http.ResponseWriter, r *http.Request) {
 }
 func handlerTools(w http.ResponseWriter, r *http.Request) {
 	bodyBuffer, _ := ioutil.ReadAll(r.Body)
-	//	fmt.Println(string(bodyBuffer))
 	sw.InsertToolInfo(bodyBuffer)
 }
 func handlerImageProperties(w http.ResponseWriter, r *http.Request) {
@@ -75,7 +74,8 @@ func main() {
 	http.HandleFunc("/", handlerHello)
 
 	ticker := time.NewTicker(time.Minute * 2)
-	tickerActions := time.NewTicker(time.Second * 10)
+	tickerActions := time.NewTicker(time.Minute * 3)
+	tickerTools := time.NewTicker(time.Second * 10)
 
 	go func() {
 		for t := range ticker.C {
@@ -86,8 +86,13 @@ func main() {
 	go func() {
 		for t := range tickerActions.C {
 			sw.AgregateActions()
-			sw.AgregateTools()
 			fmt.Println("Tick actions at", t)
+		}
+	}()
+	go func() {
+		for t := range tickerTools.C {
+			sw.AgregateTools()
+			fmt.Println("Tick tools at", t)
 		}
 	}()
 	http.ListenAndServe(":8080", nil)
