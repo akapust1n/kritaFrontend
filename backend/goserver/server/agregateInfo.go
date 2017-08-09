@@ -7,10 +7,14 @@ import (
 	md "kritaServers/backend/goserver/server/models"
 	"os"
 
+	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
-var agreagtedData md.CollectedData
+var agreagtedData md.CollectedInstallData
+var agregatedTools md.ToolsCollectedData
+var agregatedActions []md.ActionCollected
+var agregatedImageInfo md.ImageCollected
 
 func getFloat64(n int, err error) float64 {
 	CheckErr(err)
@@ -69,19 +73,83 @@ func countToolsUse(name string) (float64, float64) {
 	}
 	return countUse, averageTimeUse
 }
+func getWidth(high int, low int, session *mgo.Collection) float64 {
+	count := getFloat64(session.Find(bson.M{"images.width": bson.M{"$gt": high, "$lte": low}}).Count())
+	return count
+}
+func getHeight(high int, low int, session *mgo.Collection) float64 {
+	count := getFloat64(session.Find(bson.M{"images.height": bson.M{"$gt": high, "$lte": low}}).Count())
+	return count
+}
+func getLayer(high int, low int, session *mgo.Collection) float64 {
+	count := getFloat64(session.Find(bson.M{"images.numlayers": bson.M{"$gt": high, "$lte": low}}).Count())
+	return count
+}
+func getFileSize(high int, low int, session *mgo.Collection) float64 {
+	count := getFloat64(session.Find(bson.M{"images.size": bson.M{"$gt": high, "$lte": low}}).Count())
+	return count
+}
+func AgregateImageProps() {
+	c := Session.DB("telemetry").C("images")
+	var ic md.ImageCollected
+
+	ic.WD.L500 = getWidth(0, 500, c)
+	ic.WD.L1000 = getWidth(500, 1000, c)
+	ic.WD.L2000 = getWidth(1000, 2000, c)
+	ic.WD.L4000 = getWidth(2000, 4000, c)
+	ic.WD.L8000 = getWidth(4000, 8000, c)
+	ic.WD.M8000 = getFloat64(c.Find(bson.M{"images.width": bson.M{"$gt": 8000}}).Count())
+
+	ic.HD.L500 = getHeight(500, 1000, c)
+	ic.HD.L1000 = getHeight(1000, 2000, c)
+	ic.HD.L2000 = getHeight(1000, 2000, c)
+	ic.HD.L4000 = getHeight(2000, 4000, c)
+	ic.HD.L8000 = getHeight(4000, 8000, c)
+	ic.HD.M8000 = getFloat64(c.Find(bson.M{"images.height": bson.M{"$gt": 8000}}).Count())
+
+	ic.LD.L1 = getLayer(0, 1, c)
+	ic.LD.L2 = getLayer(1, 2, c)
+	ic.LD.L4 = getLayer(2, 4, c)
+	ic.LD.L8 = getLayer(4, 8, c)
+	ic.LD.L16 = getLayer(8, 16, c)
+	ic.LD.L32 = getLayer(16, 32, c)
+	ic.LD.L64 = getLayer(32, 64, c)
+	ic.LD.M64 = getFloat64(c.Find(bson.M{"images.numlayers": bson.M{"$gt": 8000}}).Count())
+
+	ic.ID.Mb1 = getFileSize(0, 1, c)
+	ic.ID.Mb5 = getFileSize(1, 5, c)
+	ic.ID.Mb10 = getFileSize(5, 10, c)
+	ic.ID.Mb25 = getFileSize(10, 25, c)
+	ic.ID.Mb50 = getFileSize(25, 50, c)
+	ic.ID.Mb100 = getFileSize(50, 100, c)
+	ic.ID.Mb200 = getFileSize(100, 200, c)
+	ic.ID.Mb400 = getFileSize(200, 400, c)
+	ic.ID.Mb800 = getFileSize(400, 800, c)
+	ic.ID.More800 = getFloat64(c.Find(bson.M{"images.size": bson.M{"$gt": 800}}).Count())
+	ic.CPD.RGBA = getFloat64(c.Find(bson.M{"images.colorprofile": "RGB/Alpha"}).Count())
+	ic.CPD.CMYK = getFloat64(c.Find(bson.M{"images.colorprofile": "CMYK/Alpha"}).Count())
+	ic.CPD.Grayscale = getFloat64(c.Find(bson.M{"images.colorprofile": "Grayscale/Alpha"}).Count())
+	ic.CPD.Lab = getFloat64(c.Find(bson.M{"images.colorprofile": "L*a*b*/Alpha"}).Count())
+	ic.CPD.XYZ = getFloat64(c.Find(bson.M{"images.colorprofile": "XYZ/Alpha"}).Count())
+	ic.CPD.YCbCr = getFloat64(c.Find(bson.M{"images.colorprofile": "YCbCr/Alpha"}).Count())
+
+	agregatedImageInfo = ic
+}
 func AgregateActions() {
 	file, err := os.Open("list_actions.txt")
 	CheckErr(err)
 	defer file.Close()
 
 	var action md.ActionCollected
+	var actions []md.ActionCollected
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		action.Name = scanner.Text()
 		action.CountUse = countActionsUse(action.Name)
-		agreagtedData.Actions = append(agreagtedData.Actions, action)
+		actions = append(actions, action)
 	}
+	agregatedActions = actions
 	err = scanner.Err()
 	CheckErr(err)
 }
@@ -93,17 +161,21 @@ func AgregateTools() {
 
 	var ToolUse md.ToolsCollected
 	var ToolActivate md.ToolsCollected
+	var ToolsUse []md.ToolsCollected
+	var ToolsActivate []md.ToolsCollected
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		ToolUse.Name = scanner.Text()
 		ToolUse.CountUse, _ = countToolsUse("/Use/" + ToolUse.Name)
-		agreagtedData.ToolsUse = append(agreagtedData.ToolsUse, ToolUse)
+		ToolsUse = append(ToolsUse, ToolUse)
 
 		ToolActivate.Name = ToolUse.Name
 		ToolActivate.CountUse, _ = countToolsUse("/Activate/" + ToolActivate.Name)
-		agreagtedData.ToolsActivate = append(agreagtedData.ToolsActivate, ToolUse)
+		ToolsActivate = append(ToolsActivate, ToolUse)
 	}
+	agregatedTools.ToolsActivate = ToolsActivate
+	agregatedTools.ToolsUse = ToolsUse
 	err = scanner.Err()
 	CheckErr(err)
 
@@ -171,21 +243,28 @@ func AgregateInstalInfo() {
 	agreagtedData.Locale.Language.Other = checkOtherCount(agreagtedData.Locale.Language.Other)
 
 }
-func Agregated() string {
-	out, _ := json.Marshal(agreagtedData)
-	return string(out)
-}
-func AgregateToolsInfo() {
-}
-func GetAgregatedData(dataType string) md.CollectedData {
 
+// func Agregated(type) string {
+// 	out, _ := json.Marshal(agreagtedData)
+// 	return string(out)
+// }
+
+func Agregated(dataType string) string {
 	switch dataType {
 	case "install":
-		return agreagtedData
+		out, _ := json.Marshal(agreagtedData)
+		return string(out)
 	case "tools":
+		out, _ := json.Marshal(agregatedTools)
+		return string(out)
+	case "actions":
+		out, _ := json.Marshal(agregatedActions)
+		return string(out)
+	case "images":
+		out, _ := json.Marshal(agregatedImageInfo)
+		return string(out)
+
 	default:
-		var err md.CustomError
-		err.Message = "Wrong request"
+		return string("error")
 	}
-	return agreagtedData
 }

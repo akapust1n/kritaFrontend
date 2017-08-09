@@ -11,3 +11,4 @@ type ImageInternal struct {
 	Size         float64 `json:"size"`
 	NumLayers    float64 `json:"numLayers"`
 }
+

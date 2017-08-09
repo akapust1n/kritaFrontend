@@ -8,7 +8,13 @@ type ToolsCollected struct {
 	CountUse float64
 	Name     string
 }
-type CollectedData struct {
+
+type ToolsCollectedData struct {
+	ToolsUse      []ToolsCollected
+	ToolsActivate []ToolsCollected
+}
+
+type CollectedInstallData struct {
 	Platform struct {
 		Os struct {
 			Windows float64
@@ -75,13 +81,62 @@ type CollectedData struct {
 			Other   float64
 		}
 	}
+}
 
-	Actions       []ActionCollected
-	ToolsUse      []ToolsCollected
-	ToolsActivate []ToolsCollected
+//Less or equal then mb*
+type imageDistribution struct {
+	Mb1     float64
+	Mb5     float64
+	Mb10    float64
+	Mb25    float64
+	Mb50    float64
+	Mb100   float64
+	Mb200   float64
+	Mb400   float64
+	Mb800   float64
+	More800 float64
+}
+type colorProfileDistribution struct {
+	RGBA      float64
+	CMYK      float64
+	Grayscale float64
+	XYZ       float64
+	YCbCr     float64
+	Lab       float64
+}
 
-	Tools struct {
-		KisToolBrush float64
-		KisToolLine  float64
-	}
+//Less then L*
+type heightDistribution struct {
+	L500  float64
+	L1000 float64
+	L2000 float64
+	L4000 float64
+	L8000 float64
+	M8000 float64
+}
+type widthDistribution struct {
+	L500  float64
+	L1000 float64
+	L2000 float64
+	L4000 float64
+	L8000 float64
+	M8000 float64
+}
+type layersDistribution struct {
+	L1  float64
+	L2  float64
+	L4  float64
+	L8  float64
+	L16 float64
+	L32 float64
+	L64 float64
+	M64 float64
+}
+type ImageCollected struct {
+	ID  imageDistribution
+	CPD colorProfileDistribution
+	HD  heightDistribution
+	WD  widthDistribution
+	LD  layersDistribution
+	//TODO COLORSPACE
 }
