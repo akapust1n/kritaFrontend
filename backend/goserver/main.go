@@ -20,18 +20,17 @@ func handlerInstall(w http.ResponseWriter, r *http.Request) {
 	bodyBuffer, _ := ioutil.ReadAll(r.Body)
 
 	// fmt.Printf("after parse")
-	//fmt.Println(string(bodyBuffer))
+	fmt.Println(string(bodyBuffer))
 	sw.InsertGeneralInfo(bodyBuffer)
 }
 func handlerTools(w http.ResponseWriter, r *http.Request) {
 	bodyBuffer, _ := ioutil.ReadAll(r.Body)
-	//fmt.Println(string(bodyBuffer))
-
+	fmt.Println(string(bodyBuffer))
 	sw.InsertToolInfo(bodyBuffer)
 }
 func handlerImageProperties(w http.ResponseWriter, r *http.Request) {
 	bodyBuffer, _ := ioutil.ReadAll(r.Body)
-	//fmt.Println(string(bodyBuffer))
+	fmt.Println(string(bodyBuffer))
 	sw.InsertImageInfo(bodyBuffer)
 }
 func handlerAsserts(w http.ResponseWriter, r *http.Request) {
@@ -42,7 +41,7 @@ func handlerAsserts(w http.ResponseWriter, r *http.Request) {
 }
 func handlerActions(w http.ResponseWriter, r *http.Request) {
 	bodyBuffer, _ := ioutil.ReadAll(r.Body)
-	//fmt.Println(string(bodyBuffer))
+	fmt.Println(string(bodyBuffer))
 	sw.InsertActionInfo(bodyBuffer)
 }
 func handlerGetTools(w http.ResponseWriter, r *http.Request) {
