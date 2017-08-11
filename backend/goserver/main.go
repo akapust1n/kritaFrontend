@@ -22,12 +22,18 @@ func handlerInstall(w http.ResponseWriter, r *http.Request) {
 	// fmt.Printf("after parse")
 	fmt.Println(string(bodyBuffer))
 	sw.InsertGeneralInfo(bodyBuffer)
+	w.Header().Set("Server", "A Go Web Server")
+	w.WriteHeader(200)
 }
+
 func handlerTools(w http.ResponseWriter, r *http.Request) {
 	bodyBuffer, _ := ioutil.ReadAll(r.Body)
 	fmt.Println(string(bodyBuffer))
 	sw.InsertToolInfo(bodyBuffer)
+	w.Header().Set("Server", "A Go Web Server")
+	w.WriteHeader(200)
 }
+
 func handlerImageProperties(w http.ResponseWriter, r *http.Request) {
 	bodyBuffer, _ := ioutil.ReadAll(r.Body)
 	fmt.Println(string(bodyBuffer))
@@ -38,11 +44,15 @@ func handlerAsserts(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("Asserts")
 	//	fmt.Println(string(bodyBuffer))
 	//	sw.InsertAssertInfo(bodyBuffer)
+	w.Header().Set("Server", "A Go Web Server")
+	w.WriteHeader(200)
 }
 func handlerActions(w http.ResponseWriter, r *http.Request) {
 	bodyBuffer, _ := ioutil.ReadAll(r.Body)
 	fmt.Println(string(bodyBuffer))
 	sw.InsertActionInfo(bodyBuffer)
+	w.Header().Set("Server", "A Go Web Server")
+	w.WriteHeader(200)
 }
 func handlerGetTools(w http.ResponseWriter, r *http.Request) {
 	temp := sw.Agregated("tools")
@@ -67,11 +77,12 @@ func main() {
 	sw.InitDB()
 	defer sw.Session.Close()
 
-	http.HandleFunc("/install/receiver/submit/org.krita.krita/", handlerInstall)
-	http.HandleFunc("/tools/receiver/submit/org.krita.krita/", handlerTools)
-	http.HandleFunc("/imageProperties/receiver/submit/org.krita.krita/", handlerImageProperties)
-	http.HandleFunc("/asserts/receiver/submit/org.krita.krita/", handlerAsserts)
-	http.HandleFunc("/actions/receiver/submit/org.krita.krita/", handlerActions)
+	http.HandleFunc("/install/receiver/submit/org.krita.krita", handlerInstall)
+	http.HandleFunc("/tools/receiver/submit/org.krita.krita", handlerTools)
+
+	http.HandleFunc("/imageProperties/receiver/submit/org.krita.krita", handlerImageProperties)
+	http.HandleFunc("/asserts/receiver/submit/org.krita.krita", handlerAsserts)
+	http.HandleFunc("/actions/receiver/submit/org.krita.krita", handlerActions)
 
 	http.HandleFunc("/GoogleLogin", sw.HandleGoogleLogin)
 	http.HandleFunc("/GoogleCallback", sw.HandleGoogleCallback)
