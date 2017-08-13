@@ -25,14 +25,15 @@ type CollectedInstallData struct {
 			Linux   CountAndProportion
 			Mac     CountAndProportion
 			Other   CountAndProportion
+			Unknown CountAndProportion
 		}
 		Version struct {
 			Windows struct {
-				V7    CountAndProportion
-				V8    CountAndProportion
-				V81   CountAndProportion
-				V10   CountAndProportion
-				Other CountAndProportion
+				V7      CountAndProportion
+				V8      CountAndProportion
+				V81     CountAndProportion
+				V10     CountAndProportion
+				Other   CountAndProportion
 			}
 			Linux struct {
 				Ubuntu1404 CountAndProportion
@@ -46,33 +47,36 @@ type CollectedInstallData struct {
 				Other      CountAndProportion
 			}
 			Mac struct {
-				V1012 CountAndProportion
-				Other CountAndProportion
+				V1012   CountAndProportion
+				Other   CountAndProportion
 			}
 		}
 	}
 	CPU struct {
 		Architecture struct {
-			X86_64 CountAndProportion
-			X86    CountAndProportion //на самом деле  x86_64 c маленькой буквы
-			Other  CountAndProportion
+			X86_64  CountAndProportion
+			X86     CountAndProportion //на самом деле  x86_64 c маленькой буквы
+			Other   CountAndProportion
+			Unknown CountAndProportion
 		}
 		Cores struct {
-			C1    CountAndProportion
-			C2    CountAndProportion
-			C3    CountAndProportion
-			C4    CountAndProportion
-			C6    CountAndProportion
-			C8    CountAndProportion
-			Other CountAndProportion
+			C1      CountAndProportion
+			C2      CountAndProportion
+			C3      CountAndProportion
+			C4      CountAndProportion
+			C6      CountAndProportion
+			C8      CountAndProportion
+			Other   CountAndProportion
+			Unknown CountAndProportion
 		}
 	}
 	Compiler struct {
 		Type struct {
-			GCC   CountAndProportion
-			Clang CountAndProportion
-			MSVC  CountAndProportion
-			Other CountAndProportion
+			GCC     CountAndProportion
+			Clang   CountAndProportion
+			MSVC    CountAndProportion
+			Other   CountAndProportion
+			Unknown CountAndProportion
 		}
 		// 	Version struct { //подумать что можно сделать
 		// 		V5dot4 float64
@@ -84,6 +88,7 @@ type CollectedInstallData struct {
 			English CountAndProportion
 			Russian CountAndProportion
 			Other   CountAndProportion
+			Unknown CountAndProportion
 		}
 	}
 }

@@ -3,7 +3,8 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
-	sw "kritaServers/backend/goserver/server"
+	serv "kritaServers/backend/goserver/server"
+	agr "kritaServers/backend/goserver/server/agregate"
 	"net/http"
 	"time"
 )
@@ -21,7 +22,7 @@ func handlerInstall(w http.ResponseWriter, r *http.Request) {
 
 	// fmt.Printf("after parse")
 	fmt.Println(string(bodyBuffer))
-	sw.InsertGeneralInfo(bodyBuffer)
+	serv.InsertGeneralInfo(bodyBuffer)
 	w.Header().Set("Server", "A Go Web Server")
 	w.WriteHeader(200)
 }
@@ -29,7 +30,7 @@ func handlerInstall(w http.ResponseWriter, r *http.Request) {
 func handlerTools(w http.ResponseWriter, r *http.Request) {
 	bodyBuffer, _ := ioutil.ReadAll(r.Body)
 	fmt.Println(string(bodyBuffer))
-	sw.InsertToolInfo(bodyBuffer)
+	serv.InsertToolInfo(bodyBuffer)
 	w.Header().Set("Server", "A Go Web Server")
 	w.WriteHeader(200)
 }
@@ -37,7 +38,7 @@ func handlerTools(w http.ResponseWriter, r *http.Request) {
 func handlerImageProperties(w http.ResponseWriter, r *http.Request) {
 	bodyBuffer, _ := ioutil.ReadAll(r.Body)
 	fmt.Println(string(bodyBuffer))
-	sw.InsertImageInfo(bodyBuffer)
+	serv.InsertImageInfo(bodyBuffer)
 }
 func handlerAsserts(w http.ResponseWriter, r *http.Request) {
 	//	bodyBuffer, _ := ioutil.ReadAll(r.Body)
@@ -50,32 +51,32 @@ func handlerAsserts(w http.ResponseWriter, r *http.Request) {
 func handlerActions(w http.ResponseWriter, r *http.Request) {
 	bodyBuffer, _ := ioutil.ReadAll(r.Body)
 	fmt.Println(string(bodyBuffer))
-	sw.InsertActionInfo(bodyBuffer)
+	serv.InsertActionInfo(bodyBuffer)
 	w.Header().Set("Server", "A Go Web Server")
 	w.WriteHeader(200)
 }
 func handlerGetTools(w http.ResponseWriter, r *http.Request) {
-	temp := sw.Agregated("tools")
+	temp := agr.Agregated("tools")
 	fmt.Fprintf(w, temp)
 }
 func handlerGetActions(w http.ResponseWriter, r *http.Request) {
-	temp := sw.Agregated("actions")
+	temp := agr.Agregated("actions")
 	fmt.Fprintf(w, temp)
 }
 func handlerGetInstallInfo(w http.ResponseWriter, r *http.Request) {
-	temp := sw.Agregated("install")
+	temp := agr.Agregated("install")
 	fmt.Println("HANDLE INSTALL GET")
 	fmt.Fprintf(w, temp)
 }
 func handlerGetImageInfo(w http.ResponseWriter, r *http.Request) {
-	temp := sw.Agregated("images")
+	temp := agr.Agregated("images")
 	fmt.Fprintf(w, temp)
 }
 
 func main() {
 	fmt.Printf("hello")
-	sw.InitDB()
-	defer sw.Session.Close()
+	serv.InitDB()
+	defer serv.Session.Close()
 
 	http.HandleFunc("/install/receiver/submit/org.krita.krita", handlerInstall)
 	http.HandleFunc("/tools/receiver/submit/org.krita.krita", handlerTools)
@@ -84,8 +85,8 @@ func main() {
 	http.HandleFunc("/asserts/receiver/submit/org.krita.krita", handlerAsserts)
 	http.HandleFunc("/actions/receiver/submit/org.krita.krita", handlerActions)
 
-	http.HandleFunc("/GoogleLogin", sw.HandleGoogleLogin)
-	http.HandleFunc("/GoogleCallback", sw.HandleGoogleCallback)
+	http.HandleFunc("/GoogleLogin", serv.HandleGoogleLogin)
+	http.HandleFunc("/GoogleCallback", serv.HandleGoogleCallback)
 
 	http.HandleFunc("/get/tools", handlerGetTools)
 	http.HandleFunc("/get/actions", handlerGetActions)
@@ -99,25 +100,25 @@ func main() {
 
 	go func() {
 		for t := range ticker.C {
-			sw.AgregateInstalInfo()
+			agr.AgregateInstalInfo()
 			fmt.Println("Tick at", t)
 		}
 	}()
 	go func() {
 		for t := range tickerActions.C {
-			sw.AgregateActions()
+			agr.AgregateActions()
 			fmt.Println("Tick actions at", t)
 		}
 	}()
 	go func() {
 		for t := range tickerTools.C {
-			sw.AgregateTools()
+			agr.AgregateTools()
 			fmt.Println("Tick tools at", t)
 		}
 	}()
 	go func() {
 		for t := range tickerImages.C {
-			sw.AgregateImageProps()
+			agr.AgregateImageProps()
 			fmt.Println("Tick image at", t)
 		}
 	}()
