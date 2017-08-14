@@ -46,6 +46,24 @@ func countExist(category string, session *mgo.Collection) float64 {
 // 	return string(out)
 // }
 
+func AgregatedImages(type1 string) string {
+	switch type1 {
+	case "height":
+		out, _ := json.Marshal(agregatedImageInfo.HD)
+		return string(out)
+	case "width":
+		out, _ := json.Marshal(agregatedImageInfo.WD)
+		return string(out)
+	case "numlayers":
+		out, _ := json.Marshal(agregatedImageInfo.LD)
+		return string(out)
+	case "filesize":
+		out, _ := json.Marshal(agregatedImageInfo.ID)
+		return string(out)
+	default:
+		return string("error")
+	}
+}
 func Agregated(dataType string) string {
 	switch dataType {
 	case "install":
