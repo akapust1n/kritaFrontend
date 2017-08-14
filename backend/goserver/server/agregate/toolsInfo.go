@@ -2,7 +2,6 @@ package agregate
 
 import (
 	"bufio"
-	"fmt"
 	serv "kritaServers/backend/goserver/server"
 	md "kritaServers/backend/goserver/server/models"
 	"os"
@@ -34,7 +33,6 @@ func countToolsUse(name string) (float64, float64) {
 	}
 	if len(resultsAvg) > 0 {
 		averageTimeUse, _ = resultsAvg[0]["total_count"].(float64)
-		fmt.Println(name, averageTimeUse)
 	}
 	return countUse, averageTimeUse
 }

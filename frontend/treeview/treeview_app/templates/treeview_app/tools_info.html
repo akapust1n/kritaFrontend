@@ -12,15 +12,6 @@
   <div id="example"></div>
 </body>
 <script>
-  var json = {
-    "foo": "bar",
-    "foos": ["b", "a", "r"],
-    "bar": {
-      "foo": "bar",
-      "bar": false,
-      "foobar": 1234
-    }
-  };
   var temp = JSON.parse('{{ json_string | escapejs }}')
 
   document.getElementById("example").innerHTML = JSONTree.create(temp);

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	serv "kritaServers/backend/goserver/server"
 	md "kritaServers/backend/goserver/server/models"
+	"math"
 	"strconv"
 
 	mgo "gopkg.in/mgo.v2"
@@ -27,8 +28,12 @@ func checkOtherCount(count float64) float64 {
 }
 
 func getProportion(specificCount float64, totalCount float64) string {
-	result := strconv.FormatFloat(specificCount/totalCount, 'f', -1, 32)
-	return result
+	divended := specificCount / totalCount
+	if math.IsNaN(divended) {
+		return "0%%" //+ "%"
+	}
+	result := strconv.FormatFloat(specificCount/totalCount*100, 'f', -1, 32)
+	return result + "%%"
 }
 
 func countExist(category string, session *mgo.Collection) float64 {

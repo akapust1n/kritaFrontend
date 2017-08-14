@@ -66,6 +66,8 @@ func handlerGetActions(w http.ResponseWriter, r *http.Request) {
 func handlerGetInstallInfo(w http.ResponseWriter, r *http.Request) {
 	temp := agr.Agregated("install")
 	fmt.Println("HANDLE INSTALL GET")
+	fmt.Println(string(temp))
+
 	fmt.Fprintf(w, temp)
 }
 func handlerGetImageInfo(w http.ResponseWriter, r *http.Request) {
@@ -99,27 +101,27 @@ func main() {
 	tickerImages := time.NewTicker(time.Minute * 4)
 
 	go func() {
-		for t := range ticker.C {
+		for _ = range ticker.C {
 			agr.AgregateInstalInfo()
-			fmt.Println("Tick at", t)
+			//	fmt.Println("Tick at", t)
 		}
 	}()
 	go func() {
-		for t := range tickerActions.C {
+		for _ = range tickerActions.C {
 			agr.AgregateActions()
-			fmt.Println("Tick actions at", t)
+			//fmt.Println("Tick actions at", t)
 		}
 	}()
 	go func() {
-		for t := range tickerTools.C {
+		for _ = range tickerTools.C {
 			agr.AgregateTools()
-			fmt.Println("Tick tools at", t)
+			//	fmt.Println("Tick tools at", t)
 		}
 	}()
 	go func() {
-		for t := range tickerImages.C {
+		for _ = range tickerImages.C {
 			agr.AgregateImageProps()
-			fmt.Println("Tick image at", t)
+			//fmt.Println("Tick image at", t)
 		}
 	}()
 	http.ListenAndServe(":8080", nil)

@@ -29,15 +29,14 @@ type CollectedInstallData struct {
 		}
 		Version struct {
 			Windows struct {
-				V7      CountAndProportion
-				V8      CountAndProportion
-				V81     CountAndProportion
-				V10     CountAndProportion
-				Other   CountAndProportion
+				V7    CountAndProportion
+				V8    CountAndProportion
+				V81   CountAndProportion
+				V10   CountAndProportion
+				Other CountAndProportion
 			}
 			Linux struct {
 				Ubuntu1404 CountAndProportion
-
 				Ubuntu1410 CountAndProportion
 				Ubuntu1504 CountAndProportion
 				Ubuntu1510 CountAndProportion
@@ -47,8 +46,8 @@ type CollectedInstallData struct {
 				Other      CountAndProportion
 			}
 			Mac struct {
-				V1012   CountAndProportion
-				Other   CountAndProportion
+				V1012 CountAndProportion
+				Other CountAndProportion
 			}
 		}
 	}
@@ -105,6 +104,7 @@ type imageDistribution struct {
 	Mb400   CountAndProportion
 	Mb800   CountAndProportion
 	More800 CountAndProportion
+	Unknown CountAndProportion
 }
 type colorProfileDistribution struct {
 	RGBA      CountAndProportion
@@ -113,34 +113,38 @@ type colorProfileDistribution struct {
 	XYZ       CountAndProportion
 	YCbCr     CountAndProportion
 	Lab       CountAndProportion
+	Unknown   CountAndProportion
 }
 
 //Less then L*
 type heightDistribution struct {
-	L500  CountAndProportion
-	L1000 CountAndProportion
-	L2000 CountAndProportion
-	L4000 CountAndProportion
-	L8000 CountAndProportion
-	M8000 CountAndProportion
+	L500    CountAndProportion
+	L1000   CountAndProportion
+	L2000   CountAndProportion
+	L4000   CountAndProportion
+	L8000   CountAndProportion
+	M8000   CountAndProportion
+	Unknown CountAndProportion
 }
 type widthDistribution struct {
-	L500  CountAndProportion
-	L1000 CountAndProportion
-	L2000 CountAndProportion
-	L4000 CountAndProportion
-	L8000 CountAndProportion
-	M8000 CountAndProportion
+	L500    CountAndProportion
+	L1000   CountAndProportion
+	L2000   CountAndProportion
+	L4000   CountAndProportion
+	L8000   CountAndProportion
+	M8000   CountAndProportion
+	Unknown CountAndProportion
 }
 type layersDistribution struct {
-	L1  CountAndProportion
-	L2  CountAndProportion
-	L4  CountAndProportion
-	L8  CountAndProportion
-	L16 CountAndProportion
-	L32 CountAndProportion
-	L64 CountAndProportion
-	M64 CountAndProportion
+	L1      CountAndProportion
+	L2      CountAndProportion
+	L4      CountAndProportion
+	L8      CountAndProportion
+	L16     CountAndProportion
+	L32     CountAndProportion
+	L64     CountAndProportion
+	M64     CountAndProportion
+	Unknown CountAndProportion
 }
 type ImageCollected struct {
 	ID  imageDistribution

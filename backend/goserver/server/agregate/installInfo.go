@@ -38,7 +38,7 @@ func AgregateInstalInfo() {
 	agreagtedData.Platform.Os.Windows.Proportion = getProportion(agreagtedData.Platform.Os.Windows.Count, existsRecords)
 	agreagtedData.Platform.Os.Mac.Proportion = getProportion(agreagtedData.Platform.Os.Mac.Count, existsRecords)
 	agreagtedData.Platform.Os.Other.Proportion = getProportion(agreagtedData.Platform.Os.Other.Count, existsRecords)
-
+	agreagtedData.Platform.Os.Unknown.Proportion = getProportion(agreagtedData.Platform.Os.Unknown.Count, existsRecords)
 	//version os windows
 	agreagtedData.Platform.Version.Windows.V7.Count = getFloat64(c.Find(bson.M{"platform.version": "7"}).Count())
 	agreagtedData.Platform.Version.Windows.V8.Count = getFloat64(c.Find(bson.M{"platform.version": "8"}).Count())
@@ -63,18 +63,22 @@ func AgregateInstalInfo() {
 	agreagtedData.Platform.Version.Linux.Other.Count = agreagtedData.Platform.Os.Linux.Count - agreagtedData.Platform.Version.Linux.Ubuntu1404.Count - agreagtedData.Platform.Version.Linux.Ubuntu1410.Count - agreagtedData.Platform.Version.Linux.Ubuntu1504.Count - agreagtedData.Platform.Version.Linux.Ubuntu1510.Count - agreagtedData.Platform.Version.Linux.Ubuntu1604.Count - agreagtedData.Platform.Version.Linux.Ubuntu1610.Count - agreagtedData.Platform.Version.Linux.Ubuntu1704.Count
 	agreagtedData.Platform.Version.Linux.Other.Count = checkOtherCount(agreagtedData.Platform.Version.Linux.Other.Count)
 
+	agreagtedData.Platform.Version.Linux.Ubuntu1404.Proportion = getProportion(agreagtedData.Platform.Version.Linux.Ubuntu1404.Count, agreagtedData.Platform.Os.Linux.Count)
+	agreagtedData.Platform.Version.Linux.Ubuntu1410.Proportion = getProportion(agreagtedData.Platform.Version.Linux.Ubuntu1410.Count, agreagtedData.Platform.Os.Linux.Count)
+	agreagtedData.Platform.Version.Linux.Ubuntu1504.Proportion = getProportion(agreagtedData.Platform.Version.Linux.Ubuntu1504.Count, agreagtedData.Platform.Os.Linux.Count)
+	agreagtedData.Platform.Version.Linux.Ubuntu1510.Proportion = getProportion(agreagtedData.Platform.Version.Linux.Ubuntu1510.Count, agreagtedData.Platform.Os.Linux.Count)
+	agreagtedData.Platform.Version.Linux.Ubuntu1604.Proportion = getProportion(agreagtedData.Platform.Version.Linux.Ubuntu1604.Count, agreagtedData.Platform.Os.Linux.Count)
+	agreagtedData.Platform.Version.Linux.Ubuntu1610.Proportion = getProportion(agreagtedData.Platform.Version.Linux.Ubuntu1610.Count, agreagtedData.Platform.Os.Linux.Count)
+	agreagtedData.Platform.Version.Linux.Ubuntu1704.Proportion = getProportion(agreagtedData.Platform.Version.Linux.Ubuntu1704.Count, agreagtedData.Platform.Os.Linux.Count)
+	agreagtedData.Platform.Version.Linux.Other.Proportion = getProportion(agreagtedData.Platform.Version.Linux.Other.Count, agreagtedData.Platform.Os.Linux.Count)
+
+	//mac version
 	agreagtedData.Platform.Version.Mac.V1012.Count = getFloat64(c.Find(bson.M{"platform.version": "10.12"}).Count())
 	agreagtedData.Platform.Version.Mac.Other.Count = agreagtedData.Platform.Os.Mac.Count - agreagtedData.Platform.Version.Mac.V1012.Count
 	agreagtedData.Platform.Version.Mac.Other.Count = checkOtherCount(agreagtedData.Platform.Version.Linux.Other.Count)
 
-	agreagtedData.Platform.Version.Linux.Ubuntu1404.Proportion = getProportion(agreagtedData.Platform.Version.Linux.Ubuntu1404.Count, countRecords)
-	agreagtedData.Platform.Version.Linux.Ubuntu1410.Proportion = getProportion(agreagtedData.Platform.Version.Linux.Ubuntu1410.Count, countRecords)
-	agreagtedData.Platform.Version.Linux.Ubuntu1504.Proportion = getProportion(agreagtedData.Platform.Version.Linux.Ubuntu1504.Count, countRecords)
-	agreagtedData.Platform.Version.Linux.Ubuntu1510.Proportion = getProportion(agreagtedData.Platform.Version.Linux.Ubuntu1510.Count, countRecords)
-	agreagtedData.Platform.Version.Linux.Ubuntu1604.Proportion = getProportion(agreagtedData.Platform.Version.Linux.Ubuntu1604.Count, countRecords)
-	agreagtedData.Platform.Version.Linux.Ubuntu1610.Proportion = getProportion(agreagtedData.Platform.Version.Linux.Ubuntu1610.Count, countRecords)
-	agreagtedData.Platform.Version.Linux.Ubuntu1704.Proportion = getProportion(agreagtedData.Platform.Version.Linux.Ubuntu1704.Count, countRecords)
-	agreagtedData.Platform.Version.Linux.Other.Proportion = getProportion(agreagtedData.Platform.Version.Linux.Other.Count, countRecords)
+	agreagtedData.Platform.Version.Mac.V1012.Proportion = getProportion(agreagtedData.Platform.Version.Mac.V1012.Count, agreagtedData.Platform.Os.Linux.Count)
+	agreagtedData.Platform.Version.Mac.Other.Proportion = getProportion(agreagtedData.Platform.Version.Mac.Other.Count, agreagtedData.Platform.Os.Linux.Count)
 
 	//cpu
 	agreagtedData.CPU.Architecture.X86_64.Count = getFloat64(c.Find(bson.M{"cpu.architecture": "x86_64"}).Count())
@@ -85,6 +89,12 @@ func AgregateInstalInfo() {
 	agreagtedData.CPU.Architecture.Other.Count = checkOtherCount(agreagtedData.CPU.Architecture.Other.Count)
 	agreagtedData.CPU.Architecture.Unknown.Count = countRecords - existsRecords
 
+	agreagtedData.CPU.Architecture.X86_64.Proportion = getProportion(agreagtedData.CPU.Architecture.X86_64.Count, existsRecords)
+	agreagtedData.CPU.Architecture.X86.Proportion = getProportion(agreagtedData.CPU.Architecture.X86.Count, existsRecords)
+	agreagtedData.CPU.Architecture.Other.Proportion = getProportion(agreagtedData.CPU.Architecture.Other.Count, existsRecords)
+	agreagtedData.CPU.Architecture.Unknown.Proportion = getProportion(agreagtedData.CPU.Architecture.Unknown.Count, countRecords)
+
+	//cpu cores
 	agreagtedData.CPU.Cores.C1.Count = getFloat64(c.Find(bson.M{"cpu.count": "1"}).Count())
 	agreagtedData.CPU.Cores.C2.Count = getFloat64(c.Find(bson.M{"cpu.count": "2"}).Count())
 	agreagtedData.CPU.Cores.C3.Count = getFloat64(c.Find(bson.M{"cpu.count": "3"}).Count())
@@ -95,11 +105,26 @@ func AgregateInstalInfo() {
 	agreagtedData.CPU.Cores.Other.Count = existsRecords - agreagtedData.CPU.Cores.C1.Count - agreagtedData.CPU.Cores.C2.Count - agreagtedData.CPU.Cores.C3.Count - agreagtedData.CPU.Cores.C4.Count - agreagtedData.CPU.Cores.C6.Count - agreagtedData.CPU.Cores.C8.Count
 	agreagtedData.CPU.Cores.Unknown.Count = countRecords - existsRecords
 
+	agreagtedData.CPU.Cores.C1.Proportion = getProportion(agreagtedData.CPU.Cores.C1.Count, existsRecords)
+	agreagtedData.CPU.Cores.C2.Proportion = getProportion(agreagtedData.CPU.Cores.C2.Count, existsRecords)
+	agreagtedData.CPU.Cores.C3.Proportion = getProportion(agreagtedData.CPU.Cores.C3.Count, existsRecords)
+	agreagtedData.CPU.Cores.C4.Proportion = getProportion(agreagtedData.CPU.Cores.C4.Count, existsRecords)
+	agreagtedData.CPU.Cores.C6.Proportion = getProportion(agreagtedData.CPU.Cores.C6.Count, existsRecords)
+	agreagtedData.CPU.Cores.C8.Proportion = getProportion(agreagtedData.CPU.Cores.C8.Count, existsRecords)
+	agreagtedData.CPU.Cores.Other.Proportion = getProportion(agreagtedData.CPU.Cores.Other.Count, existsRecords)
+	agreagtedData.CPU.Cores.Unknown.Proportion = getProportion(agreagtedData.CPU.Cores.Unknown.Count, countRecords)
+
 	//language
 	agreagtedData.Locale.Language.English.Count = getFloat64(c.Find(bson.M{"locale.language": "English"}).Count())
 	agreagtedData.Locale.Language.Russian.Count = getFloat64(c.Find(bson.M{"locale.language": "Russian"}).Count())
-	existsRecords = countExist("cpu.count", c)
+	existsRecords = countExist("locale.language", c)
 	agreagtedData.Locale.Language.Other.Count = existsRecords - agreagtedData.Locale.Language.English.Count - agreagtedData.Locale.Language.Russian.Count
 	agreagtedData.Locale.Language.Other.Count = checkOtherCount(agreagtedData.Locale.Language.Other.Count)
 	agreagtedData.Locale.Language.Unknown.Count = countRecords - existsRecords
+
+	agreagtedData.Locale.Language.English.Proportion = getProportion(agreagtedData.Locale.Language.English.Count, existsRecords)
+	agreagtedData.Locale.Language.Russian.Proportion = getProportion(agreagtedData.Locale.Language.Russian.Count, existsRecords)
+	agreagtedData.Locale.Language.Other.Proportion = getProportion(agreagtedData.Locale.Language.Other.Count, existsRecords)
+	agreagtedData.Locale.Language.Unknown.Proportion = getProportion(agreagtedData.Locale.Language.Unknown.Count, countRecords)
+
 }
