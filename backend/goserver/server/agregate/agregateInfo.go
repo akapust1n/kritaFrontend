@@ -60,6 +60,39 @@ func AgregatedImages(type1 string) string {
 	case "filesize":
 		out, _ := json.Marshal(agregatedImageInfo.ID)
 		return string(out)
+	case "colorprofile":
+		out, _ := json.Marshal(agregatedImageInfo.CPD)
+		return string(out)
+	default:
+		return string("error")
+	}
+}
+func AgregatedInstall(type1 string) string {
+	switch type1 {
+	case "os":
+		out, _ := json.Marshal(agreagtedData.Platform.Os)
+		return string(out)
+	case "windows":
+		out, _ := json.Marshal(agreagtedData.Platform.Version.Windows)
+		return string(out)
+	case "linux":
+		out, _ := json.Marshal(agreagtedData.Platform.Version.Linux)
+		return string(out)
+	case "mac":
+		out, _ := json.Marshal(agreagtedData.Platform.Version.Mac)
+		return string(out)
+	case "architecture":
+		out, _ := json.Marshal(agreagtedData.CPU.Architecture)
+		return string(out)
+	case "cores":
+		out, _ := json.Marshal(agreagtedData.CPU.Cores)
+		return string(out)
+	case "compiler":
+		out, _ := json.Marshal(agreagtedData.Compiler.Type)
+		return string(out)
+	case "locale":
+		out, _ := json.Marshal(agreagtedData.Locale.Language)
+		return string(out)
 	default:
 		return string("error")
 	}

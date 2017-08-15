@@ -64,16 +64,21 @@ func handlerGetActions(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, temp)
 }
 func handlerGetInstallInfo(w http.ResponseWriter, r *http.Request) {
+	type1 := r.URL.Query().Get("type")
+	if len(type1) != 0 {
+		dataOfType := agr.AgregatedInstall(type1)
+		fmt.Fprintf(w, dataOfType)
+		fmt.Println(dataOfType)
+		return
+	}
 	temp := agr.Agregated("install")
-	fmt.Println("HANDLE INSTALL GET")
-	fmt.Println(string(temp))
-
+	fmt.Println(temp)
 	fmt.Fprintf(w, temp)
 }
 func handlerGetImageInfo(w http.ResponseWriter, r *http.Request) {
 	type1 := r.URL.Query().Get("type")
 	if len(type1) != 0 {
-		dataOfType := agr.AgregatedImages(type1)
+		dataOfType := agr.AgregatedInstall(type1)
 		fmt.Fprintf(w, dataOfType)
 		return
 	}
