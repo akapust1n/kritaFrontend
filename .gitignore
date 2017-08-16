@@ -20,6 +20,8 @@ nohup*
 node_modules/
 public/api
 *.idea/*
+*.idea*
+../.idea/
 *.vscode
 *.log
 .travis.yml

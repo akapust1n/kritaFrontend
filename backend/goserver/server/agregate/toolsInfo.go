@@ -36,6 +36,7 @@ func countToolsUse(name string) (float64, float64) {
 	}
 	return countUse, averageTimeUse
 }
+
 func AgregateTools() {
 	file, err := os.Open("list_tools.txt")
 	serv.CheckErr(err)
@@ -49,12 +50,12 @@ func AgregateTools() {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		ToolUse.Name = scanner.Text()
-		ToolUse.CountUse, _ = countToolsUse("/Use/" + ToolUse.Name)
+		ToolUse.CountUse, ToolUse.Time = countToolsUse("/Use/" + ToolUse.Name)
 		ToolsUse = append(ToolsUse, ToolUse)
 
 		ToolActivate.Name = ToolUse.Name
-		ToolActivate.CountUse, _ = countToolsUse("/Activate/" + ToolActivate.Name)
-		ToolsActivate = append(ToolsActivate, ToolUse)
+		ToolActivate.CountUse, ToolActivate.Time = countToolsUse("/Activate/" + ToolActivate.Name)
+		ToolsActivate = append(ToolsActivate, ToolActivate)
 	}
 	agregatedTools.ToolsActivate = ToolsActivate
 	agregatedTools.ToolsUse = ToolsUse

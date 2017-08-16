@@ -5,6 +5,9 @@ import http.client
 from graphos.renderers import gchart
 from graphos.sources.simple import SimpleDataSource
 from graphos.renderers.gchart import BarChart
+from .models import Tools, ToolsActivate
+from django_tables2 import RequestConfig
+from .tables import ToolsTable, ToolsActivateTable
 
 
 # Create your views here.
@@ -197,9 +200,9 @@ def install_graphs(request):
         response[CPU_ARCHITECTURE_COUNT] = getInstallInfo("architecture", [
             "X86_64", "X86", "Other", "Unknown"], "Count", "Kinds of architecture")
         response[CPU_CORES_COUNT] = getInstallInfo("cores", [
-            "C1", "C2", "C3", "C4", "C6", "C8","Other", "Unknown"], "Count", "Number of cores")
+            "C1", "C2", "C3", "C4", "C6", "C8", "Other", "Unknown"], "Count", "Number of cores")
         response[COMPILER_COUNT] = getInstallInfo("compiler", [
-            "GCC", "Clang","MSVC", "Other", "Unknown"], "Count", "Compilers")
+            "GCC", "Clang", "MSVC", "Other", "Unknown"], "Count", "Compilers")
         response[LOCALE_COUNT] = getInstallInfo("locale", [
             "English", "Russian", "Other", "Unknown"], "Count", "Locales")
     except Exception as e:
@@ -250,3 +253,48 @@ def install_graphs(request):
                "chart7": chart[LOCALE_COUNT],
                }
     return render(request, 'treeview_app/install_graphs.html', context)
+
+
+def tools_table_use(request):
+    Tools.objects.all().delete()
+    conn = http.client.HTTPConnection("localhost:8080")
+    conn.request("GET", "/get/tools")
+    r1 = conn.getresponse()
+    response = r1.read()  # what will happen if response code will be not 200
+    conn.close()
+    response = response.decode("utf-8")
+    decoded = json.loads(response)
+    resultList = []
+    for x in decoded["ToolsUse"]:
+        # print(decoded[x][subsection])
+        dd = Tools(name=x["Name"], countUse=x["CountUse"], time = x["Time"])
+        dd.save()
+
+    table = ToolsTable(Tools.objects.all())
+    table2 = ToolsActivateTable(ToolsActivate.objects.all())
+    RequestConfig(request).configure(table)
+    RequestConfig(request).configure(table2)
+
+    context = {'tools': table, 'toolsactivate': table2}
+    return render(request, 'treeview_app/tools_table.html', context)
+
+def tools_table_activate(request):
+    ToolsActivate.objects.all().delete()
+    conn = http.client.HTTPConnection("localhost:8080")
+    conn.request("GET", "/get/tools")
+    r1 = conn.getresponse()
+    response = r1.read()  # what will happen if response code will be not 200
+    conn.close()
+    response = response.decode("utf-8")
+    decoded = json.loads(response)
+    resultList = []
+
+    for x in decoded["ToolsActivate"]:
+            # print(decoded[x][subsection])
+        dd = ToolsActivate(name=x["Name"], countUse=x["CountUse"],time = x["Time"])
+        dd.save()
+    table2 = ToolsActivateTable(ToolsActivate.objects.all())
+    RequestConfig(request).configure(table2)
+
+    context = {'tools': table2}
+    return render(request, 'treeview_app/tools_table.html', context)

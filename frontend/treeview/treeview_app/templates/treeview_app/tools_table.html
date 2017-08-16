@@ -1,0 +1,19 @@
+<html lang="en">
+{% load render_table from django_tables2 %} {% load staticfiles %}
+
+<html>
+
+<head>
+    <style type="text/css">
+        td.id,
+        th.id {
+            display: none;
+        }
+    </style>
+    <link rel="stylesheet" href="{% static 'django_tables2/themes/paleblue/css/screen.css' %}" />
+</head>
+
+<body> Tools {% render_table tools %}
+</body>
+
+</html>

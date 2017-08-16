@@ -9,6 +9,9 @@ urlpatterns = [
     url(r'^tools/$', views.show_tools_info, name='show_tools_info'),
     url(r'^images/$', views.show_images_info, name='show_images_info'),
     url(r'^imagesGraphs/$', views.image_graphs, name='image_graphs'), 
-    url(r'^installGraphs/$', views.install_graphs , name='install_graphs'),  
+    url(r'^installGraphs/$', views.install_graphs , name='install_graphs'), 
+    url(r'^toolsTableUse/$', views.tools_table_use , name='tools_table_use'),  
+    url(r'^toolsTableActivate/$', views.tools_table_activate , name='tools_table_activate'),  
+
 ]
 

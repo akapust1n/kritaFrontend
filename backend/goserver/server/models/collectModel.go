@@ -6,6 +6,7 @@ type ActionCollected struct {
 }
 type ToolsCollected struct {
 	CountUse float64
+	Time     float64
 	Name     string
 }
 
