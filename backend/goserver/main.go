@@ -78,7 +78,7 @@ func handlerGetInstallInfo(w http.ResponseWriter, r *http.Request) {
 func handlerGetImageInfo(w http.ResponseWriter, r *http.Request) {
 	type1 := r.URL.Query().Get("type")
 	if len(type1) != 0 {
-		dataOfType := agr.AgregatedInstall(type1)
+		dataOfType := agr.AgregatedImages(type1)
 		fmt.Fprintf(w, dataOfType)
 		return
 	}

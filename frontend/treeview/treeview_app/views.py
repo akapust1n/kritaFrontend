@@ -94,7 +94,9 @@ def getImageInfo(type, distribution, subsection, title):
     r1 = conn.getresponse()
     response = r1.read()  # what will happen if response code will be not 200
     conn.close()
+    print("test1")
     response = response.decode("utf-8")
+    print(type)
     decoded = json.loads(response)
 
     resultList = [[title, subsection], ]
