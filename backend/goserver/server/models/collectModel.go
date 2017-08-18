@@ -4,6 +4,9 @@ type ActionCollected struct {
 	CountUse float64
 	Name     string
 }
+type AgregatedActionsJson struct {
+	Actions []ActionCollected
+}
 type ToolsCollected struct {
 	CountUse float64
 	Time     float64

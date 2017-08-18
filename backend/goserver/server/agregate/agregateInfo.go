@@ -14,6 +14,7 @@ import (
 var agreagtedData md.CollectedInstallData
 var agregatedTools md.ToolsCollectedData
 var agregatedActions []md.ActionCollected
+var agregatedActionsJson md.AgregatedActionsJson
 var agregatedImageInfo md.ImageCollected
 
 func getFloat64(n int, err error) float64 {
@@ -106,7 +107,8 @@ func Agregated(dataType string) string {
 		out, _ := json.Marshal(agregatedTools)
 		return string(out)
 	case "actions":
-		out, _ := json.Marshal(agregatedActions)
+		agregatedActionsJson.Actions = agregatedActions
+		out, _ := json.Marshal(agregatedActionsJson)
 		return string(out)
 	case "images":
 		out, _ := json.Marshal(agregatedImageInfo)

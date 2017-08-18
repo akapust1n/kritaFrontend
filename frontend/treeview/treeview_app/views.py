@@ -5,12 +5,16 @@ import http.client
 from graphos.renderers import gchart
 from graphos.sources.simple import SimpleDataSource
 from graphos.renderers.gchart import BarChart
-from .models import Tools, ToolsActivate
+from .models import Tools, ToolsActivate, Actions
 from django_tables2 import RequestConfig
-from .tables import ToolsTable, ToolsActivateTable
+from .tables import ToolsTable, ToolsActivateTable, ActionsTable
+import threading
+import sched, time
+
 
 
 # Create your views here.
+
 
 def show_install_info(request):
     # response = json.dumps({"timestamp1": 22, "timestamp2": 14})
@@ -258,45 +262,67 @@ def install_graphs(request):
 
 
 def tools_table_use(request):
-    Tools.objects.all().delete()
-    conn = http.client.HTTPConnection("localhost:8080")
-    conn.request("GET", "/get/tools")
-    r1 = conn.getresponse()
-    response = r1.read()  # what will happen if response code will be not 200
-    conn.close()
-    response = response.decode("utf-8")
-    decoded = json.loads(response)
-    resultList = []
-    for x in decoded["ToolsUse"]:
-        # print(decoded[x][subsection])
-        dd = Tools(name=x["Name"], countUse=x["CountUse"], time = x["Time"])
-        dd.save()
 
     table = ToolsTable(Tools.objects.all())
-    table2 = ToolsActivateTable(ToolsActivate.objects.all())
     RequestConfig(request).configure(table)
-    RequestConfig(request).configure(table2)
 
-    context = {'tools': table, 'toolsactivate': table2}
+    context = {'tools': table}
     return render(request, 'treeview_app/tools_table.html', context)
 
 def tools_table_activate(request):
-    ToolsActivate.objects.all().delete()
-    conn = http.client.HTTPConnection("localhost:8080")
-    conn.request("GET", "/get/tools")
-    r1 = conn.getresponse()
-    response = r1.read()  # what will happen if response code will be not 200
-    conn.close()
-    response = response.decode("utf-8")
-    decoded = json.loads(response)
-    resultList = []
-
-    for x in decoded["ToolsActivate"]:
-            # print(decoded[x][subsection])
-        dd = ToolsActivate(name=x["Name"], countUse=x["CountUse"],time = x["Time"])
-        dd.save()
-    table2 = ToolsActivateTable(ToolsActivate.objects.all())
-    RequestConfig(request).configure(table2)
-
-    context = {'tools': table2}
+   
+    table = ToolsActivateTable(ToolsActivate.objects.all())
+    RequestConfig(request).configure(table)
+    context = {'tools': table}
     return render(request, 'treeview_app/tools_table.html', context)
+
+def actions_table(request):
+    table = ActionsTable(Actions.objects.all())
+    RequestConfig(request).configure(table)
+    context = {'actions': table}
+    return render(request, 'treeview_app/actions_table.html', context)
+    
+def collectLargeData():
+    s = sched.scheduler(time.time, time.sleep)
+
+    def collect(sc):
+        print("collect data...")
+        ToolsActivate.objects.all().delete()
+        Tools.objects.all().delete()
+        Actions.objects.all().delete()
+
+        conn = http.client.HTTPConnection("localhost:8080")
+        conn.request("GET", "/get/tools")
+        r1 = conn.getresponse()
+        response = r1.read()  # what will happen if response code will be not 200
+        conn.close()
+        response = response.decode("utf-8")
+        decoded = json.loads(response)
+        for x in decoded["ToolsActivate"]:
+                # print(decoded[x][subsection])
+            dd = ToolsActivate(name=x["Name"], countUse=x["CountUse"], time = x["Time"])
+            dd.save()
+        for x in decoded["ToolsUse"]:
+            # print(decoded[x][subsection])
+            dd = Tools(name=x["Name"], countUse=x["CountUse"], time = x["Time"])
+            dd.save()
+        #actions
+        conn = http.client.HTTPConnection("localhost:8080")
+        conn.request("GET", "/get/actions")
+        r1 = conn.getresponse()
+        response = r1.read()  # what will happen if response code will be not 200
+        conn.close()
+        response = response.decode("utf-8")
+        decoded = json.loads(response)
+        for x in decoded["Actions"]:
+                # print(decoded[x][subsection])
+            dd = Actions(name=x["Name"], countUse=x["CountUse"])
+            dd.save()
+        s.enter(3600, 1, collect, (sc,)) #updates every hour
+
+    s.enter(0.1, 1, collect, (s,))
+    s.run()
+
+def collectLargeDataWrapper():
+    t = threading.Timer(10.0, collectLargeData)
+    t.start() 

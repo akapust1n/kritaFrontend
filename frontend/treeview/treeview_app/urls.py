@@ -2,6 +2,8 @@ from django.conf.urls import url
 from . import views
 from jsonview.decorators import json_view
 
+views.collectLargeDataWrapper()
+
 urlpatterns = [
     url(r'^$', views.start_list, name='star_list'),
     url(r'^installInfo/$', views.show_install_info, name='show_install_info'),
@@ -12,6 +14,7 @@ urlpatterns = [
     url(r'^installGraphs/$', views.install_graphs , name='install_graphs'), 
     url(r'^toolsTableUse/$', views.tools_table_use , name='tools_table_use'),  
     url(r'^toolsTableActivate/$', views.tools_table_activate , name='tools_table_activate'),  
+    url(r'^actionsTable/$', views.actions_table , name='actions_table'),  
 
 ]
 
