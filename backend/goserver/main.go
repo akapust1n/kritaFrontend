@@ -41,10 +41,10 @@ func handlerImageProperties(w http.ResponseWriter, r *http.Request) {
 	serv.InsertImageInfo(bodyBuffer)
 }
 func handlerAsserts(w http.ResponseWriter, r *http.Request) {
-	//	bodyBuffer, _ := ioutil.ReadAll(r.Body)
+	bodyBuffer, _ := ioutil.ReadAll(r.Body)
 	fmt.Printf("Asserts")
-	//	fmt.Println(string(bodyBuffer))
-	//	sw.InsertAssertInfo(bodyBuffer)
+	fmt.Println(string(bodyBuffer))
+	serv.InsertAssertInfo(bodyBuffer)
 	w.Header().Set("Server", "A Go Web Server")
 	w.WriteHeader(200)
 }
@@ -65,6 +65,8 @@ func handlerGetActions(w http.ResponseWriter, r *http.Request) {
 }
 func handlerGetInstallInfo(w http.ResponseWriter, r *http.Request) {
 	type1 := r.URL.Query().Get("type")
+	fmt.Println("Install!")
+
 	if len(type1) != 0 {
 		dataOfType := agr.AgregatedInstall(type1)
 		fmt.Fprintf(w, dataOfType)
@@ -83,6 +85,10 @@ func handlerGetImageInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	temp := agr.Agregated("images")
+	fmt.Fprintf(w, temp)
+}
+func handlerGetAssertsInfo(w http.ResponseWriter, r *http.Request) {
+	temp := agr.Agregated("asserts")
 	fmt.Fprintf(w, temp)
 }
 
@@ -105,11 +111,13 @@ func main() {
 	http.HandleFunc("/get/actions", handlerGetActions)
 	http.HandleFunc("/get/install", handlerGetInstallInfo)
 	http.HandleFunc("/get/images", handlerGetImageInfo)
+	http.HandleFunc("/get/asserts", handlerGetAssertsInfo)
 
 	ticker := time.NewTicker(time.Minute * 2)
 	tickerActions := time.NewTicker(time.Minute * 3)
 	tickerTools := time.NewTicker(time.Minute * 3)
 	tickerImages := time.NewTicker(time.Minute * 4)
+	tickerAsserts := time.NewTicker(time.Minute * 2)
 
 	go func() {
 		for _ = range ticker.C {
@@ -134,6 +142,13 @@ func main() {
 			agr.AgregateImageProps()
 			//fmt.Println("Tick image at", t)
 		}
+	}()
+	go func() {
+		for _ = range tickerAsserts.C {
+			agr.AgregateAsserts()
+			//fmt.Println("Tick asserts")
+		}
+
 	}()
 	http.ListenAndServe(":8080", nil)
 }

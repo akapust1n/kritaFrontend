@@ -12,7 +12,14 @@ func InsertGeneralInfo(request []byte) {
 	CheckErr(err)
 	c := Session.DB("telemetry").C("installInfo")
 	c.Insert(model)
-	fmt.Println("inserted info!")
+}
+func InsertAssertInfo(request []byte) {
+	var model md.Assert
+	err := json.Unmarshal(request, &model)
+	CheckErr(err)
+	c := Session.DB("telemetry").C("asserts")
+	c.Insert(model)
+	fmt.Println("inserted asserts!")
 }
 
 func InsertToolInfo(request []byte) {
@@ -43,15 +50,4 @@ func InsertImageInfo(request []byte) {
 	c := Session.DB("telemetry").C("images")
 	c.Insert(images)
 	fmt.Println("inserted IMAGE info!")
-}
-
-func InsertAssertInfo(request []byte) {
-	/// TODO
-	// var err error
-	// var tools md.Tool
-	// err = json.Unmarshal(request, &tools)
-	// CheckErr(err)
-	// c := Session.DB("telemetry").C("asserts")
-	// c.Insert(tools)
-	// fmt.Println("inserted ASSERTS info!")
 }

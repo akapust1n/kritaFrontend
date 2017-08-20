@@ -16,6 +16,7 @@ var agregatedTools md.ToolsCollectedData
 var agregatedActions []md.ActionCollected
 var agregatedActionsJson md.AgregatedActionsJson
 var agregatedImageInfo md.ImageCollected
+var agregatedAsserts md.AgregatedAssertsJson
 
 func getFloat64(n int, err error) float64 {
 	serv.CheckErr(err)
@@ -112,6 +113,9 @@ func Agregated(dataType string) string {
 		return string(out)
 	case "images":
 		out, _ := json.Marshal(agregatedImageInfo)
+		return string(out)
+	case "asserts":
+		out, _ := json.Marshal(agregatedAsserts)
 		return string(out)
 
 	default:

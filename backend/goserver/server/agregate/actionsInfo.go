@@ -14,11 +14,7 @@ func countActionsUse(name string) float64 {
 	c := serv.Session.DB("telemetry").C("actions")
 	pipe := c.Pipe([]bson.M{{"$unwind": "$actions"}, {"$match": bson.M{"actions.actionname": name}}, {"$group": bson.M{"_id": "$actions.actionname", "total_count": bson.M{"$sum": "$actions.countuse"}}}})
 	//fmt.Println(pipe)
-	resp := []bson.M{}
-	err := pipe.All(&resp)
-	serv.CheckErr(err)
-	//fmt.Println(resp) // simple print proving it's working
-	err = pipe.All(&results)
+	err := pipe.All(&results)
 	serv.CheckErr(err)
 	if len(results) > 0 {
 		num, _ := results[0]["total_count"].(float64)

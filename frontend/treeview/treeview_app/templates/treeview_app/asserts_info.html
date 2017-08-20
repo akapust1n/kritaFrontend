@@ -1,0 +1,21 @@
+<html lang="en">
+{% load staticfiles %}
+
+<head>
+  <title>json tree example</title>
+  <link href="{% static 'treeview_app/css/jsontree.css' %}" rel="stylesheet">
+  <script src="{% static 'treeview_app/js/jsontree.js' %}"></script>
+
+</head>
+
+<body>
+  <h2>Last 100 asserts</h2>
+  <div id="asserts"></div>
+</body>
+<script>
+  var temp = JSON.parse('{{ asserts| escapejs }}')
+
+  document.getElementById("asserts").innerHTML = JSONTree.create(temp);
+</script>
+
+</html>

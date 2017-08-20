@@ -7,6 +7,16 @@ type ActionCollected struct {
 type AgregatedActionsJson struct {
 	Actions []ActionCollected
 }
+type AssertsCollected struct {
+	Assert struct {
+		Line string `bson:"assertline"`
+		Text string `bson:"asserttext"`
+		File string `bson:"assertfile"`
+	} `bson:"assert"`
+}
+type AgregatedAssertsJson struct {
+	Asserts []AssertsCollected
+}
 type ToolsCollected struct {
 	CountUse float64
 	Time     float64
@@ -69,6 +79,11 @@ type CollectedInstallData struct {
 			C4      CountAndProportion
 			C6      CountAndProportion
 			C8      CountAndProportion
+			Other   CountAndProportion
+			Unknown CountAndProportion
+		}
+		Vendor struct {
+			Intel   CountAndProportion
 			Other   CountAndProportion
 			Unknown CountAndProportion
 		}

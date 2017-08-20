@@ -95,12 +95,12 @@ func AgregateInstalInfo() {
 	agreagtedData.CPU.Architecture.Unknown.Proportion = getProportion(agreagtedData.CPU.Architecture.Unknown.Count, countRecords)
 
 	//cpu cores
-	agreagtedData.CPU.Cores.C1.Count = getFloat64(c.Find(bson.M{"cpu.count": "1"}).Count())
-	agreagtedData.CPU.Cores.C2.Count = getFloat64(c.Find(bson.M{"cpu.count": "2"}).Count())
-	agreagtedData.CPU.Cores.C3.Count = getFloat64(c.Find(bson.M{"cpu.count": "3"}).Count())
-	agreagtedData.CPU.Cores.C4.Count = getFloat64(c.Find(bson.M{"cpu.count": "4"}).Count())
-	agreagtedData.CPU.Cores.C6.Count = getFloat64(c.Find(bson.M{"cpu.count": "6"}).Count())
-	agreagtedData.CPU.Cores.C8.Count = getFloat64(c.Find(bson.M{"cpu.count": "8"}).Count())
+	agreagtedData.CPU.Cores.C1.Count = getFloat64(c.Find(bson.M{"cpu.count": 1}).Count())
+	agreagtedData.CPU.Cores.C2.Count = getFloat64(c.Find(bson.M{"cpu.count": 2}).Count())
+	agreagtedData.CPU.Cores.C3.Count = getFloat64(c.Find(bson.M{"cpu.count": 3}).Count())
+	agreagtedData.CPU.Cores.C4.Count = getFloat64(c.Find(bson.M{"cpu.count": 4}).Count())
+	agreagtedData.CPU.Cores.C6.Count = getFloat64(c.Find(bson.M{"cpu.count": 6}).Count())
+	agreagtedData.CPU.Cores.C8.Count = getFloat64(c.Find(bson.M{"cpu.count": 8}).Count())
 	existsRecords = countExist("cpu.count", c)
 	agreagtedData.CPU.Cores.Other.Count = existsRecords - agreagtedData.CPU.Cores.C1.Count - agreagtedData.CPU.Cores.C2.Count - agreagtedData.CPU.Cores.C3.Count - agreagtedData.CPU.Cores.C4.Count - agreagtedData.CPU.Cores.C6.Count - agreagtedData.CPU.Cores.C8.Count
 	agreagtedData.CPU.Cores.Unknown.Count = countRecords - existsRecords
@@ -114,6 +114,14 @@ func AgregateInstalInfo() {
 	agreagtedData.CPU.Cores.Other.Proportion = getProportion(agreagtedData.CPU.Cores.Other.Count, existsRecords)
 	agreagtedData.CPU.Cores.Unknown.Proportion = getProportion(agreagtedData.CPU.Cores.Unknown.Count, countRecords)
 
+	agreagtedData.CPU.Vendor.Intel.Count = getFloat64(c.Find(bson.M{"cpu.isintel": true}).Count())
+	existsRecords = countExist("cpu.isintel", c)
+	agreagtedData.CPU.Vendor.Other.Count = existsRecords - agreagtedData.CPU.Vendor.Intel.Count
+	agreagtedData.CPU.Vendor.Unknown.Count = countRecords - existsRecords
+
+	agreagtedData.CPU.Vendor.Intel.Proportion = getProportion(agreagtedData.CPU.Vendor.Intel.Count, existsRecords)
+	agreagtedData.CPU.Vendor.Other.Proportion = getProportion(agreagtedData.CPU.Vendor.Other.Count, existsRecords)
+	agreagtedData.CPU.Vendor.Unknown.Proportion = getProportion(agreagtedData.CPU.Vendor.Unknown.Count, countRecords)
 	//language
 	agreagtedData.Locale.Language.English.Count = getFloat64(c.Find(bson.M{"locale.language": "English"}).Count())
 	agreagtedData.Locale.Language.Russian.Count = getFloat64(c.Find(bson.M{"locale.language": "Russian"}).Count())

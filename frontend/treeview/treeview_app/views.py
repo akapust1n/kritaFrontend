@@ -87,7 +87,21 @@ def show_actions_info(request):
 
     return render(request, "treeview_app/actions_info.html", {'json_string': response})
 
+def show_asserts_info(request):
+    response = json.dumps({"there should be ": "error request"})
+    try:
+        conn = http.client.HTTPConnection("localhost:8080")
+        conn.request("GET", "/get/asserts")
+        r1 = conn.getresponse()
+        response = r1.read()  # what will happen if response code will be not 200
+        conn.close()
+        print(response)
+    except Exception as e:
+        print("error")
+        return render(request, "treeview_app/error_page.html")
 
+    return render(request, "treeview_app/asserts_info.html", {'asserts': response})
+    
 def start_list(request):
     return render(request, 'treeview_app/start_page.html', {})
 
@@ -189,6 +203,7 @@ def install_graphs(request):
     CPU_CORES_COUNT = 5
     COMPILER_COUNT = 6
     LOCALE_COUNT = 7
+    ISINTEL_COUNT = 8
 
     response = []
     for i in range(8):

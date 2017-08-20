@@ -9,13 +9,13 @@
 </head>
 
 <body>
-  <div id="example"></div>
+  <div id="actions"></div>
 </body>
 <script>
 
   var temp = JSON.parse('{{ json_string | escapejs }}')
 
-  document.getElementById("example").innerHTML = JSONTree.create(temp);
+  document.getElementById("actions").innerHTML = JSONTree.create(temp);
 </script>
 
 </html>

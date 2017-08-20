@@ -2,13 +2,20 @@ package models
 
 //Request from krita
 type Request struct {
-	ApplicationVersion struct {
-		Version string `json:"value"`
-	} `json:"applicationVersion"`
+	General struct {
+		AppVersion string `json:"appVersion"`
+	} `json:"general"`
 	Compiler struct {
 		Type    string `json:"type"`
 		Version string `json:"version"`
 	} `json:"compiler"`
+	Cpu struct {
+		Architecture string  `json:"architecture"`
+		Count        float64 `json:"count"`
+		Family       float64 `json:"family"`
+		IsIntel      bool    `json:"isIntel"`
+		Model        float64 `json:"model"`
+	}
 	Locale struct {
 		Language string `json:"language"`
 	} `json:"locale"`
