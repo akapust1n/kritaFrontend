@@ -16,8 +16,7 @@ type ColorGroup struct {
 }
 
 func handlerInstall(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
-	fmt.Printf("REQUEST")
+	fmt.Printf("handlerInstall!")
 	bodyBuffer, _ := ioutil.ReadAll(r.Body)
 
 	// fmt.Printf("after parse")
@@ -28,6 +27,8 @@ func handlerInstall(w http.ResponseWriter, r *http.Request) {
 }
 
 func handlerTools(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("handlerTools!")
+
 	bodyBuffer, _ := ioutil.ReadAll(r.Body)
 	fmt.Println(string(bodyBuffer))
 	serv.InsertToolInfo(bodyBuffer)
@@ -36,6 +37,7 @@ func handlerTools(w http.ResponseWriter, r *http.Request) {
 }
 
 func handlerImageProperties(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("handlerImageProperties!")
 	bodyBuffer, _ := ioutil.ReadAll(r.Body)
 	fmt.Println(string(bodyBuffer))
 	serv.InsertImageInfo(bodyBuffer)
@@ -49,6 +51,8 @@ func handlerAsserts(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(200)
 }
 func handlerActions(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("handlerActions!")
+
 	bodyBuffer, _ := ioutil.ReadAll(r.Body)
 	fmt.Println(string(bodyBuffer))
 	serv.InsertActionInfo(bodyBuffer)

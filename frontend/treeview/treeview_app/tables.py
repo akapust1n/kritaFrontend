@@ -7,16 +7,18 @@ class ToolsTable(tables.Table):
     class Meta:
         model = Tools
         # add class="paleblue" to <table> tag
+        order_by = '-countUse'
         attrs = {'class': 'paleblue'}
 
 class ToolsActivateTable(tables.Table):
     class Meta:
         model = ToolsActivate
+        order_by = '-countUse'
         # add class="paleblue" to <table> tag
         attrs = {'class': 'paleblue'}
 
 class ActionsTable(tables.Table):
     class Meta:
         model = Actions
-        # add class="paleblue" to <table> tag
+        order_by = '-countUse'
         attrs = {'class': 'paleblue'}

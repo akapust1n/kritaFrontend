@@ -302,9 +302,6 @@ def collectLargeData():
 
     def collect(sc):
         print("collect data...")
-        ToolsActivate.objects.all().delete()
-        Tools.objects.all().delete()
-        Actions.objects.all().delete()
 
         conn = http.client.HTTPConnection("localhost:8080")
         conn.request("GET", "/get/tools")
@@ -313,6 +310,9 @@ def collectLargeData():
         conn.close()
         response = response.decode("utf-8")
         decoded = json.loads(response)
+        ToolsActivate.objects.all().delete()
+        Tools.objects.all().delete()
+        Actions.objects.all().delete()
         for x in decoded["ToolsActivate"]:
                 # print(decoded[x][subsection])
             dd = ToolsActivate(name=x["Name"], countUse=x["CountUse"], time = x["Time"])
