@@ -1,21 +1,20 @@
-<html lang="en">
+{% extends 'treeview_app/base.html' %}
 {% load staticfiles %}
 
-<head>
-  <title>json tree example</title>
-  <link href="{% static 'treeview_app/css/jsontree.css' %}" rel="stylesheet"> 
-  <script src="{% static 'treeview_app/js/jsontree.js' %}"></script>
+{% block script %}
+<link href="{% static 'treeview_app/css/jsontree.css' %}" rel="stylesheet">
+<script src="{% static 'treeview_app/js/jsontree.js' %}"></script>
+{% endblock %}
+{% block title %}Tree image info {% endblock%}
 
-</head>
 
-<body>
-  <div id="imageinfo"></div>
-</body>
+{%block content %}
+<div id="imageinfo"></div>
+
 <script>
 
-  var temp = JSON.parse('{{ json_string | escapejs }}')
+    var temp = JSON.parse('{{ json_string | escapejs }}')
 
-  document.getElementById("imageinfo").innerHTML = JSONTree.create(temp);
+    document.getElementById("imageinfo").innerHTML = JSONTree.create(temp);
 </script>
-
-</html>
+{% endblock %}

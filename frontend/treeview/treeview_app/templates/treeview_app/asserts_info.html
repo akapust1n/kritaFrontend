@@ -1,21 +1,21 @@
-assertsInfo<html lang="en">
+{% extends 'treeview_app/base.html' %}
+
 {% load staticfiles %}
+{% block script %}
+<link href="{% static 'treeview_app/css/jsontree.css' %}" rel="stylesheet">
+<script src="{% static 'treeview_app/js/jsontree.js' %}"></script>
+{% endblock %}
+{% block title %}
+Asserts
+{% endblock %}
 
-<head>
-  <title>json tree example</title>
-  <link href="{% static 'treeview_app/css/jsontree.css' %}" rel="stylesheet">
-  <script src="{% static 'treeview_app/js/jsontree.js' %}"></script>
-
-</head>
-
-<body>
-  <h2>Last 100 asserts</h2>
-  <div id="asserts"></div>
-</body>
+{% block content %}
+<h2>Last 100 asserts</h2>
+<div id="asserts"></div>
 <script>
-  var temp = JSON.parse('{{ asserts| escapejs }}')
+    var temp = JSON.parse('{{ asserts| escapejs }}')
 
-  document.getElementById("asserts").innerHTML = JSONTree.create(temp);
+    document.getElementById("asserts").innerHTML = JSONTree.create(temp);
 </script>
+{% endblock %}
 
-</html>

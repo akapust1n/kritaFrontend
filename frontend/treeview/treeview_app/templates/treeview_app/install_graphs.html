@@ -1,17 +1,15 @@
-<html lang="en">
+{% extends 'treeview_app/base.html' %}
 {% load staticfiles %}
-<html>
 
-<head>
-    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <script type="text/javascript">
-        google.load("visualization", "1", {
-            packages: ["corechart"]
-        });
-    </script>
-</head>
+{% block script %}
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript">
+    google.load("visualization", "1", {
+        packages: ["corechart"]
+    });
+</script>
+{% endblock %}
 
-<body>{{ chart.as_html }} {{ chart1.as_html }} {{ chart2.as_html }} {{ chart6.as_html }} {{ chart7.as_html }}
-</body>
-
-</html>
+{% block content %}
+{{ chart.as_html }} {{ chart1.as_html }} {{ chart2.as_html }} {{ chart6.as_html }} {{ chart7.as_html }}
+{% endblock %}

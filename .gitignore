@@ -1,3 +1,8 @@
+#Specific
+frontend/treeview/db.sqlite3
+frontend/treeview/treeview_app/migrations/
+frontend/treeview/treeview/static/
+
 .vscode
 debug
 nohup*
