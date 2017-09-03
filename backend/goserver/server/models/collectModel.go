@@ -17,6 +17,7 @@ type AssertsCollected struct {
 type AgregatedAssertsJson struct {
 	Asserts []AssertsCollected
 }
+
 type ToolsCollected struct {
 	CountUse float64
 	Time     float64
@@ -31,6 +32,11 @@ type ToolsCollectedData struct {
 type CountAndProportion struct {
 	Count      float64
 	Proportion string
+}
+
+type AppVersion struct {
+	Name     string
+	CountUse CountAndProportion
 }
 type CollectedInstallData struct {
 	Platform struct {
@@ -108,6 +114,11 @@ type CollectedInstallData struct {
 			Other   CountAndProportion
 			Unknown CountAndProportion
 		}
+	}
+	AppVersions struct {
+		Versions []AppVersion
+		Other    CountAndProportion
+		Unknown  CountAndProportion
 	}
 }
 

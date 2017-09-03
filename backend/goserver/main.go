@@ -30,7 +30,7 @@ func handlerTools(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("handlerTools!")
 
 	bodyBuffer, _ := ioutil.ReadAll(r.Body)
-	fmt.Println(string(bodyBuffer))
+	//fmt.Println(string(bodyBuffer))
 	serv.InsertToolInfo(bodyBuffer)
 	w.Header().Set("Server", "A Go Web Server")
 	w.WriteHeader(200)
@@ -39,12 +39,12 @@ func handlerTools(w http.ResponseWriter, r *http.Request) {
 func handlerImageProperties(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("handlerImageProperties!")
 	bodyBuffer, _ := ioutil.ReadAll(r.Body)
-	fmt.Println(string(bodyBuffer))
+	//fmt.Println(string(bodyBuffer))
 	serv.InsertImageInfo(bodyBuffer)
 }
 func handlerAsserts(w http.ResponseWriter, r *http.Request) {
 	bodyBuffer, _ := ioutil.ReadAll(r.Body)
-	fmt.Printf("Asserts")
+	fmt.Printf("\nAsserts!")
 	fmt.Println(string(bodyBuffer))
 	serv.InsertAssertInfo(bodyBuffer)
 	w.Header().Set("Server", "A Go Web Server")
@@ -54,7 +54,7 @@ func handlerActions(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("handlerActions!")
 
 	bodyBuffer, _ := ioutil.ReadAll(r.Body)
-	fmt.Println(string(bodyBuffer))
+	//	fmt.Println(string(bodyBuffer))
 	serv.InsertActionInfo(bodyBuffer)
 	w.Header().Set("Server", "A Go Web Server")
 	w.WriteHeader(200)
@@ -69,6 +69,7 @@ func handlerGetActions(w http.ResponseWriter, r *http.Request) {
 }
 func handlerGetInstallInfo(w http.ResponseWriter, r *http.Request) {
 	type1 := r.URL.Query().Get("type")
+
 	fmt.Println("Install!")
 
 	if len(type1) != 0 {
@@ -78,7 +79,6 @@ func handlerGetInstallInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	temp := agr.Agregated("install")
-	fmt.Println(temp)
 	fmt.Fprintf(w, temp)
 }
 func handlerGetImageInfo(w http.ResponseWriter, r *http.Request) {
@@ -122,6 +122,7 @@ func main() {
 	tickerTools := time.NewTicker(time.Minute * 3)
 	tickerImages := time.NewTicker(time.Minute * 4)
 	tickerAsserts := time.NewTicker(time.Minute * 2)
+	tickerGenerateLists := time.NewTicker(time.Hour * 10)
 
 	go func() {
 		for _ = range ticker.C {
@@ -153,6 +154,12 @@ func main() {
 			//fmt.Println("Tick asserts")
 		}
 
+	}()
+
+	go func() {
+		for _ = range tickerGenerateLists.C {
+			agr.AgregateListAppVersions()
+		}
 	}()
 	http.ListenAndServe(":8080", nil)
 }

@@ -1,8 +1,13 @@
 package agregate
 
 import (
+	"bufio"
+	"fmt"
 	serv "kritaServers/backend/goserver/server"
+	md "kritaServers/backend/goserver/server/models"
+	"os"
 
+	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -134,5 +139,52 @@ func AgregateInstalInfo() {
 	agreagtedData.Locale.Language.Russian.Proportion = getProportion(agreagtedData.Locale.Language.Russian.Count, existsRecords)
 	agreagtedData.Locale.Language.Other.Proportion = getProportion(agreagtedData.Locale.Language.Other.Count, existsRecords)
 	agreagtedData.Locale.Language.Unknown.Proportion = getProportion(agreagtedData.Locale.Language.Unknown.Count, countRecords)
+	agregateAppVersions(c, countRecords)
+}
+func AgregateListAppVersions() {
+	c := serv.Session.DB("telemetry").C("installInfo")
+	var versions []string
+	err := c.Find(nil).Distinct("general.appversion", &versions)
+	serv.CheckErr(err)
+	file, err := os.Create("list_appversions_generated.txt")
+	serv.CheckErr(err)
+	defer file.Close()
+	w := bufio.NewWriter(file)
+	for _, version := range versions {
+		if version != "" {
+			fmt.Fprintln(w, version)
+		}
+	}
+	err = w.Flush()
+	serv.CheckErr(err)
+}
+
+func agregateAppVersions(c *mgo.Collection, countRecords float64) {
+	file, err := os.Open("list_appversions_generated.txt")
+	serv.CheckErr(err)
+	defer file.Close()
+	existsRecords := countExist("general.appversion", c)
+
+	var version md.AppVersion
+	var versions []md.AppVersion
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		version.Name = scanner.Text()
+		version.CountUse.Count = getFloat64(c.Find(bson.M{"general.appversion": version.Name}).Count())
+		version.CountUse.Proportion = getProportion(version.CountUse.Count, existsRecords)
+		versions = append(versions, version)
+	}
+	err = scanner.Err()
+	serv.CheckErr(err)
+	var sumVersions float64
+	for _, version := range versions {
+		sumVersions += version.CountUse.Count
+	}
+	agreagtedData.AppVersions.Versions = versions
+	agreagtedData.AppVersions.Other.Count = existsRecords - sumVersions
+	agreagtedData.AppVersions.Unknown.Count = countRecords - existsRecords
+	agreagtedData.AppVersions.Other.Proportion = getProportion(existsRecords, sumVersions)
+	agreagtedData.AppVersions.Unknown.Proportion = getProportion(countRecords, existsRecords)
 
 }
