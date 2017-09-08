@@ -2,6 +2,7 @@ package agregate
 
 import (
 	"bufio"
+	"fmt"
 	serv "kritaServers/backend/goserver/server"
 	md "kritaServers/backend/goserver/server/models"
 	"os"
@@ -62,4 +63,21 @@ func AgregateTools() {
 	err = scanner.Err()
 	serv.CheckErr(err)
 
+}
+func AgregateListTools() {
+	c := serv.Session.DB("telemetry").C("tools")
+	var tools []string
+	err := c.Find(nil).Distinct("tools.toolname", &tools)
+	serv.CheckErr(err)
+	file, err := os.Create("list_tools_generated.txt")
+	serv.CheckErr(err)
+	defer file.Close()
+	w := bufio.NewWriter(file)
+	for _, tool := range tools {
+		if tool != "" {
+			fmt.Fprintln(w, tool)
+		}
+	}
+	err = w.Flush()
+	serv.CheckErr(err)
 }

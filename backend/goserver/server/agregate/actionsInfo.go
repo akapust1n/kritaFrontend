@@ -2,6 +2,7 @@ package agregate
 
 import (
 	"bufio"
+	"fmt"
 	serv "kritaServers/backend/goserver/server"
 	md "kritaServers/backend/goserver/server/models"
 	"os"
@@ -24,7 +25,7 @@ func countActionsUse(name string) float64 {
 	return 0
 }
 func AgregateActions() {
-	file, err := os.Open("list_actions.txt")
+	file, err := os.Open("list_actions_generated.txt")
 	serv.CheckErr(err)
 	defer file.Close()
 
@@ -39,5 +40,22 @@ func AgregateActions() {
 	}
 	agregatedActions = actions
 	err = scanner.Err()
+	serv.CheckErr(err)
+}
+func AgregateListActions() {
+	c := serv.Session.DB("telemetry").C("actions")
+	var actions []string
+	err := c.Find(nil).Distinct("actions.actionname", &actions)
+	serv.CheckErr(err)
+	file, err := os.Create("list_actions_generated.txt")
+	serv.CheckErr(err)
+	defer file.Close()
+	w := bufio.NewWriter(file)
+	for _, action := range actions {
+		if action != "" {
+			fmt.Fprintln(w, action)
+		}
+	}
+	err = w.Flush()
 	serv.CheckErr(err)
 }

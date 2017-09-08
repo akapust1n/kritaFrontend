@@ -159,6 +159,8 @@ func main() {
 	go func() {
 		for _ = range tickerGenerateLists.C {
 			agr.AgregateListAppVersions()
+			agr.AgregateListActions()
+			agr.AgregateListTools()
 		}
 	}()
 	http.ListenAndServe(":8080", nil)

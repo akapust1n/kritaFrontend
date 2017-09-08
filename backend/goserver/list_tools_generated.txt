@@ -1,0 +1,12 @@
+Tool/Use/KritaShape/KisToolBrush
+Tool/Use/KritaShape/KisToolLine
+Tool/Use/KritaShape/KisToolRectangle
+Tool/Activate/KisToolPolygon
+Tool/Activate/KritaShape/KisToolBrush
+Tool/Activate/KritaShape/KisToolLine
+Tool/Use/KisToolSelectRectangular
+/Activate/KritaShape/KisToolBrush
+/Use/KritaShape/KisToolBrush
+/Use/KritaShape/KisToolLine
+/Activate/KritaShape/KisToolLine
+/Activate/KritaShape/KisToolRectangle
